@@ -1,6 +1,7 @@
 import {
   addCompatibility,
   getCompatibilityByProductId,
+  removeCompatibility,
 } from "../repositories/productCompatibility.repository.js";
 
 const createCompatibility = async (
@@ -21,7 +22,21 @@ const fetchCompatibility = async (
   );
 };
 
+const deleteCompatibility =
+  async (
+    productId,
+    variantId
+  ) => {
+
+    return await removeCompatibility(
+      productId,
+      variantId
+    );
+
+  };
+
 export {
   createCompatibility,
   fetchCompatibility,
+  deleteCompatibility
 };

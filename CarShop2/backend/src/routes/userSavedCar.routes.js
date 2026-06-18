@@ -8,19 +8,10 @@ import {
 
 const router = express.Router();
 
-router.post(
-  "/:userId/saved-cars",
-  addSavedCar
-);
+router.post("/:userId/saved-cars", addSavedCar);
 
-router.get(
-  "/:userId/saved-cars",
-  getSavedCars
-);
+router.get( "/:userId/saved-cars", getSavedCars);
 
-router.delete(
-  "/saved-cars/:savedCarId",
-  removeSavedCar
-);
+router.delete( "/saved-cars/:savedCarId", removeSavedCar);
 
 export default router;

@@ -6,6 +6,8 @@ import vehicleRoutes from "./routes/vehicle.routes.js";
 import productRoutes from "./routes/product.routes.js";
 import productCompatibilityRoutes from "./routes/productCompatibility.routes.js";
 import userSavedCarRoutes from "./routes/userSavedCar.routes.js";
+import catalogRoutes from "./routes/catalog.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 
 
 
@@ -20,6 +22,9 @@ app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/products", productCompatibilityRoutes);
 app.use("/api/users", userSavedCarRoutes);
+app.use("/api/catalog", catalogRoutes);
+app.use("/api/auth", authRoutes);
+
 
 app.get("/", (req, res) => {
   res.json({

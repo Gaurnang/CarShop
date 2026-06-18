@@ -1,11 +1,6 @@
 import pool from "../config/db.js";
 
-const saveCar = async (
-  userId,
-  variantId,
-  nickname,
-  isPrimary = false
-) => {
+const saveCar = async (userId, variantId, nickname, isPrimary = false ) => {
   const result = await pool.query(
     `
     INSERT INTO user_saved_cars

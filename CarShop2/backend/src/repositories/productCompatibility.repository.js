@@ -68,7 +68,31 @@ const getCompatibilityByProductId = async (
   return result.rows;
 };
 
+const removeCompatibility =
+  async (
+    productId,
+    variantId
+  ) => {
+
+    const result =
+      await pool.query(
+        `
+        DELETE FROM product_compatibility
+        WHERE product_id = $1
+        AND variant_id = $2
+        RETURNING *
+        `,
+        [
+          productId,
+          variantId,
+        ]
+      );
+
+    return result.rows[0];
+  };
+
 export {
   addCompatibility,
   getCompatibilityByProductId,
+  removeCompatibility,
 };

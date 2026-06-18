@@ -61,13 +61,18 @@ CREATE TABLE user_saved_cars (
 
     variant_id BIGINT NOT NULL,
 
+    nickname VARCHAR(100),
+
+    is_primary BOOLEAN DEFAULT FALSE,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id)
-      REFERENCES users(id)
-      ON DELETE CASCADE,
+        REFERENCES users(id)
+        ON DELETE CASCADE,
 
     FOREIGN KEY (variant_id)
-      REFERENCES car_variants(id)
-      ON DELETE CASCADE
+        REFERENCES car_variants(id)
+        ON DELETE CASCADE,
+    UNIQUE(user_id, variant_id)
 );

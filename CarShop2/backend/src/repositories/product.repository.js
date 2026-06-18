@@ -37,8 +37,47 @@ const createProduct = async ({name, description, price, stock, image_url}) => {
   return result.rows[0];
 };
 
+const updateProduct = async (id,  productData) => {
+  const {name, description, price} = productData;
+
+  const result = await pool.query(
+    `
+    UPDATE products
+    SET
+      name = $1,
+      description = $2,
+      price = $3
+    WHERE id = $4
+    RETURNING *
+    `,
+    [
+      name,
+      description,
+      price,
+      id,
+    ]
+  );
+
+  return result.rows[0];
+};
+
+const deleteProduct = async ( id ) => {
+  const result = await pool.query(
+    `
+    DELETE FROM products
+    WHERE id = $1
+    RETURNING *
+    `,
+    [id]
+  );
+
+  return result.rows[0];
+};
+
 export {
   getProducts,
   getProductById,
   createProduct,
+  updateProduct,
+  deleteProduct
 };

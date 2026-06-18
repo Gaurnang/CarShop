@@ -1,6 +1,7 @@
 import {
   createCompatibility,
   fetchCompatibility,
+  deleteCompatibility,
 } from "../services/productCompatibility.service.js";
 
 const addProductCompatibility = async (
@@ -56,7 +57,42 @@ const getProductCompatibility = async (
   }
 };
 
+const removeProductCompatibility =
+  async (
+    req,
+    res
+  ) => {
+
+    try {
+
+      const {
+        productId,
+        variantId,
+      } = req.params;
+
+      const compatibility =
+        await deleteCompatibility(
+          productId,
+          variantId
+        );
+
+      res.status(200).json({
+        success: true,
+        data: compatibility,
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+
+    }
+  };
+
 export {
   addProductCompatibility,
   getProductCompatibility,
+  removeProductCompatibility,
 };
