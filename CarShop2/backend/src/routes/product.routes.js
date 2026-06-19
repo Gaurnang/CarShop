@@ -18,12 +18,6 @@ router.get("/", getProducts);
 
 router.get("/:id", getProductById);
 
-console.log("protect =", protect);
-console.log("isAdmin =", isAdmin);
-console.log("createProduct =", createProduct);
-console.log("updateProduct =", updateProduct);
-console.log("deleteProduct =", deleteProduct);
-
 router.post("/", protect, isAdmin, createProduct);
 
 router.patch("/:id", protect, isAdmin, updateProduct);

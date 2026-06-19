@@ -13,17 +13,9 @@ import isAdmin from "../middleware/admin.middleware.js";
 
 const router = express.Router();
 
-router.post(
-  "/:productId/compatibility",
-  protect,
-  isAdmin,
-  addProductCompatibility
-);
+router.post("/:productId/compatibility", protect, isAdmin, addProductCompatibility);
 
-router.get(
-  "/:productId/compatibility",
-  getProductCompatibility
-);
+router.get("/:productId/compatibility", getProductCompatibility);
 
 router.delete(
   "/:productId/compatibility/:variantId",
