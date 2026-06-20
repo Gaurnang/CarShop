@@ -6,6 +6,9 @@ import {
   deleteProduct,
 } from "../repositories/product.repository.js";
 
+import { uploadImage } from "./cloudinary.service.js";
+import {updateProductImage} from "../repositories/product.repository.js";
+
 const fetchProducts = async () => {
   return await getProducts();
 };
@@ -26,10 +29,26 @@ const removeProduct = async (id) => {
   return await deleteProduct(id);
 };
 
+const uploadProductImage =  async (
+    productId,
+    file
+  ) => {
+
+    const result =
+      await uploadImage(
+        file.buffer
+      );
+
+    return await updateProductImage(
+      productId,
+      result.secure_url
+    );
+  };
 export {
   fetchProducts,
   fetchProductById,
   addProduct,
   updateProductById,
-  removeProduct
+  removeProduct,
+  uploadProductImage,
 };  

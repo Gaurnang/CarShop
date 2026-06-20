@@ -6,6 +6,8 @@ import {
   removeProduct,
 } from "../services/product.service.js";
 
+import {uploadProductImage} from "../services/product.service.js";
+
 const getProducts = async (req, res) => {
   try {
     const products = await fetchProducts();
@@ -122,10 +124,41 @@ const deleteProduct = async (
   }
 };
 
+export const uploadImage = async (
+    req,
+    res
+  ) => {
+
+    try {
+
+      const product =
+        await uploadProductImage(
+          req.params.id,
+          req.file
+        );
+
+      res.status(200).json({
+        success: true,
+        data: product,
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        success: false,
+        message:
+          error.message,
+      });
+
+    }
+
+  };
+
 export {
   getProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
+  uploadImage,
 };

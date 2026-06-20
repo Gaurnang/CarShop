@@ -9,8 +9,10 @@ import {
 } from "../controllers/product.controller.js";
 
 import protect from "../middleware/auth.middleware.js";
-
 import isAdmin from "../middleware/admin.middleware.js";
+
+import upload from "../middleware/upload.middleware.js";
+import {uploadImage} from "../controllers/product.controller.js";
 
 const router = express.Router();
 

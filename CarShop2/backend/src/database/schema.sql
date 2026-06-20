@@ -76,3 +76,59 @@ CREATE TABLE user_saved_cars (
         ON DELETE CASCADE,
     UNIQUE(user_id, variant_id)
 );
+
+CREATE TABLE campaigns (
+    id BIGSERIAL PRIMARY KEY,
+
+    title VARCHAR(255) NOT NULL,
+
+    subject VARCHAR(255) NOT NULL,
+
+    content TEXT NOT NULL,
+
+    status VARCHAR(20)
+    DEFAULT 'DRAFT',
+
+    total_recipients INTEGER
+    DEFAULT 0,
+
+    sent_at TIMESTAMP,
+
+    created_at TIMESTAMP
+    DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE campaigns (
+    id BIGSERIAL PRIMARY KEY,
+
+    title VARCHAR(255) NOT NULL,
+
+    subject VARCHAR(255) NOT NULL,
+
+    content TEXT NOT NULL,
+
+    status VARCHAR(20)
+    DEFAULT 'DRAFT',
+
+    created_at TIMESTAMP
+    DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE campaign_products (
+    campaign_id BIGINT NOT NULL,
+
+    product_id BIGINT NOT NULL,
+
+    PRIMARY KEY (
+      campaign_id,
+      product_id
+    ),
+
+    FOREIGN KEY (campaign_id)
+      REFERENCES campaigns(id)
+      ON DELETE CASCADE,
+
+    FOREIGN KEY (product_id)
+      REFERENCES products(id)
+      ON DELETE CASCADE
+);

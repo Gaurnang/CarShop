@@ -74,10 +74,32 @@ const deleteProduct = async ( id ) => {
   return result.rows[0];
 };
 
+export const updateProductImage = async (
+    productId,
+    imageUrl
+  ) => {
+
+    const result =
+      await pool.query(
+        `
+        UPDATE products
+        SET image_url = $1
+        WHERE id = $2
+        RETURNING *
+        `,
+        [
+          imageUrl,
+          productId,
+        ]
+      );
+
+    return result.rows[0];
+  };
 export {
   getProducts,
   getProductById,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  updateProductImage,
 };

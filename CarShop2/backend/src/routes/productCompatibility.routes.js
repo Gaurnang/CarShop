@@ -17,11 +17,6 @@ router.post("/:productId/compatibility", protect, isAdmin, addProductCompatibili
 
 router.get("/:productId/compatibility", getProductCompatibility);
 
-router.delete(
-  "/:productId/compatibility/:variantId",
-  protect,
-  isAdmin,
-  removeProductCompatibility
-);
+router.delete("/:productId/compatibility/:variantId", protect, isAdmin, removeProductCompatibility);
 
 export default router;
