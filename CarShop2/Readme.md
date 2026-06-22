@@ -1,6 +1,6 @@
 # 🚗 CarShop Backend
 
-A scalable backend system for an automotive e-commerce platform that provides personalized product recommendations based on vehicle compatibility and supports targeted marketing campaigns through background email processing.
+A backend system for an automotive e-commerce platform that provides personalized product recommendations based on vehicle compatibility and supports targeted marketing campaigns through background email processing.
 
 ---
 
