@@ -13,13 +13,15 @@ const createCampaign = async (
       (
         title,
         subject,
-        content
+        content,
+        status
       )
       VALUES
       (
         $1,
         $2,
-        $3
+        $3,
+        'QUEUED'
       )
       RETURNING *
       `,
@@ -100,9 +102,45 @@ const getCampaignById =
     return result.rows[0];
   };
 
+const getRecipientsByCampaignId =
+  async (
+    campaignId
+  ) => {
+
+    const result =
+      await pool.query(
+        `
+        SELECT DISTINCT
+          u.id,
+          u.email,
+          u.name
+
+        FROM campaigns c
+
+        JOIN campaign_products cp
+          ON cp.campaign_id = c.id
+
+        JOIN product_compatibility pc
+          ON pc.product_id = cp.product_id
+
+        JOIN user_saved_cars usc
+          ON usc.variant_id = pc.variant_id
+
+        JOIN users u
+          ON u.id = usc.user_id
+
+        WHERE c.id = $1
+        `,
+        [campaignId]
+      );
+
+    return result.rows;
+  };
+
 export {
   createCampaign,
   addCampaignProducts,
   getCampaigns,
   getCampaignById,
+  getRecipientsByCampaignId,
 };

@@ -7,11 +7,9 @@ import {
 } from "../controllers/campaign.controller.js";
 
 import protect from "../middleware/auth.middleware.js";
-
 import isAdmin from "../middleware/admin.middleware.js";
 
-const router =
-  express.Router();
+const router = express.Router();
 
 router.post(
   "/send",

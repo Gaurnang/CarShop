@@ -74,7 +74,7 @@ const deleteProduct = async ( id ) => {
   return result.rows[0];
 };
 
-export const updateProductImage = async (
+const updateProductImage = async (
     productId,
     imageUrl
   ) => {
@@ -95,6 +95,7 @@ export const updateProductImage = async (
 
     return result.rows[0];
   };
+  
 export {
   getProducts,
   getProductById,

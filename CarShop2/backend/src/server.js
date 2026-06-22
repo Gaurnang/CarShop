@@ -8,8 +8,7 @@ import productCompatibilityRoutes from "./routes/productCompatibility.routes.js"
 import userSavedCarRoutes from "./routes/userSavedCar.routes.js";
 import catalogRoutes from "./routes/catalog.routes.js";
 import authRoutes from "./routes/auth.routes.js";
-
-
+import campaignRoutes from "./routes/campaign.routes.js";
 
 dotenv.config();
 
@@ -24,6 +23,7 @@ app.use("/api/products", productCompatibilityRoutes);
 app.use("/api/users", userSavedCarRoutes);
 app.use("/api/catalog", catalogRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/campaigns", campaignRoutes);
 
 
 app.get("/", (req, res) => {

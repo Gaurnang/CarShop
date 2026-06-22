@@ -124,7 +124,7 @@ const deleteProduct = async (
   }
 };
 
-export const uploadImage = async (
+const uploadImage = async (
     req,
     res
   ) => {
@@ -152,7 +152,7 @@ export const uploadImage = async (
 
     }
 
-  };
+};
 
 export {
   getProducts,

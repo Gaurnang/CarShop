@@ -3,7 +3,12 @@ import {
   addCampaignProducts,
   getCampaigns,
   getCampaignById,
+  getRecipientsByCampaignId,
 } from "../repositories/campaign.repository.js";
+
+import {
+  queueEmail,
+} from "./queue.service.js";
 
 const sendCampaign =
   async (
@@ -29,7 +34,30 @@ const sendCampaign =
       productIds
     );
 
-    return campaign;
+    const recipients =
+      await getRecipientsByCampaignId(
+        campaign.id
+      );
+
+    for (
+      const recipient
+      of recipients
+    ) {
+
+      await queueEmail(
+        recipient.email,
+        subject,
+        content
+      );
+
+    }
+
+    return {
+      ...campaign,
+      recipientCount:
+        recipients.length,
+    };
+
   };
 
 const fetchCampaigns =

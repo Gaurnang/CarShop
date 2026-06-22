@@ -26,4 +26,6 @@ router.patch("/:id", protect, isAdmin, updateProduct);
 
 router.delete( "/:id", protect, isAdmin, deleteProduct);
 
+router.post("/:id/image", protect, isAdmin, upload.single("image"), uploadImage);
+
 export default router;

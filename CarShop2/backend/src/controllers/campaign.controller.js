@@ -5,10 +5,7 @@ import {
 } from "../services/campaign.service.js";
 
 const createAndSendCampaign =
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
 
     try {
 
@@ -26,8 +23,7 @@ const createAndSendCampaign =
 
       res.status(500).json({
         success: false,
-        message:
-          error.message,
+        message: error.message,
       });
 
     }
@@ -35,10 +31,7 @@ const createAndSendCampaign =
   };
 
 const getCampaigns =
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
 
     try {
 
@@ -54,8 +47,7 @@ const getCampaigns =
 
       res.status(500).json({
         success: false,
-        message:
-          error.message,
+        message: error.message,
       });
 
     }
@@ -63,10 +55,7 @@ const getCampaigns =
   };
 
 const getCampaignById =
-  async (
-    req,
-    res
-  ) => {
+  async (req, res) => {
 
     try {
 
@@ -84,8 +73,7 @@ const getCampaignById =
 
       res.status(500).json({
         success: false,
-        message:
-          error.message,
+        message: error.message,
       });
 
     }
