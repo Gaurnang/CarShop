@@ -98,21 +98,6 @@ CREATE TABLE campaigns (
     DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE campaigns (
-    id BIGSERIAL PRIMARY KEY,
-
-    title VARCHAR(255) NOT NULL,
-
-    subject VARCHAR(255) NOT NULL,
-
-    content TEXT NOT NULL,
-
-    status VARCHAR(20)
-    DEFAULT 'DRAFT',
-
-    created_at TIMESTAMP
-    DEFAULT CURRENT_TIMESTAMP
-);
 
 CREATE TABLE campaign_products (
     campaign_id BIGINT NOT NULL,

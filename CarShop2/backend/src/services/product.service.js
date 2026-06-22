@@ -44,6 +44,7 @@ const uploadProductImage =  async (
       result.secure_url
     );
   };
+  
 export {
   fetchProducts,
   fetchProductById,
