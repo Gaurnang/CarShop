@@ -1,0 +1,639 @@
+# 🚗 CarShop Backend
+
+A backend system for an automotive e-commerce platform that provides personalized product recommendations based on vehicle compatibility and supports targeted marketing campaigns through background email processing.
+
+---
+
+## 📌 Overview
+
+CarShop is designed to solve a common problem in the automotive aftermarket industry:
+
+> Showing only those products that are compatible with a customer's vehicle and enabling businesses to run highly targeted marketing campaigns.
+
+The system allows users to save their vehicles, browse compatible products, and receive personalized promotional emails based on their saved vehicles.
+
+---
+
+# ✨ Features
+
+### Authentication & Authorization
+
+* JWT Authentication
+* Protected Routes
+* Role-Based Access Control (Admin/User)
+
+### Vehicle Management
+
+* Vehicle Brands
+* Vehicle Models
+* Vehicle Variants
+
+### Product Management
+
+* Product CRUD Operations
+* Product Image Upload
+* Cloudinary Integration
+
+### Compatibility Engine
+
+* Product ↔ Vehicle Variant Mapping
+* Compatibility-Based Product Filtering
+
+### Saved Vehicles
+
+* Users can save multiple vehicles
+* Personalized recommendations based on saved vehicles
+
+### Personalized Catalog
+
+* Dynamic catalog generated from compatibility data
+* Shows only products compatible with user vehicles
+
+### Campaign Management
+
+* Create marketing campaigns
+* Associate campaigns with products
+* Automatically identify eligible recipients
+
+### Background Job Processing
+
+* BullMQ Queue
+* Redis
+* Worker Processes
+* Automatic Retry Mechanism
+* Exponential Backoff Strategy
+
+### Email Marketing
+
+* Resend Email API
+* Personalized Campaign Delivery
+* Background Email Sending
+
+---
+
+# 🏗️ System Architecture
+
+```text
+                         ┌───────────────┐
+                         │     Admin     │
+                         └───────┬───────┘
+                                 │
+                                 ▼
+                       Create Campaign
+                                 │
+                                 ▼
+                        Campaign Service
+                                 │
+                                 ▼
+                      Find Matching Users
+                                 │
+                                 ▼
+                           BullMQ Queue
+                                 │
+                                 ▼
+                              Redis
+                                 │
+                                 ▼
+                              Worker
+                                 │
+                                 ▼
+                         Email Service
+                                 │
+                                 ▼
+                              Resend
+                                 │
+                                 ▼
+                           User Inbox
+```
+
+---
+
+# 🏛️ Layered Architecture
+
+```text
+Routes
+   │
+   ▼
+Controllers
+   │
+   ▼
+Services
+   │
+   ▼
+Repositories
+   │
+   ▼
+PostgreSQL
+```
+
+### Responsibilities
+
+#### Routes
+
+Receive HTTP Requests
+
+#### Controllers
+
+Handle Request & Response
+
+#### Services
+
+Business Logic
+
+#### Repositories
+
+Database Queries
+
+---
+
+# 🛠️ Tech Stack
+
+## Backend
+
+* Node.js
+* Express.js
+
+## Database
+
+* PostgreSQL
+
+## Authentication
+
+* JWT
+
+## File Storage
+
+* Cloudinary
+* Multer
+
+## Background Processing
+
+* BullMQ
+* Redis
+
+## Email Service
+
+* Resend
+
+## Environment Management
+
+* dotenv
+
+---
+
+# 🗄️ Database Schema
+
+## Users
+
+```sql
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
+    password TEXT,
+    role VARCHAR(20)
+);
+```
+
+---
+
+## Brands
+
+```sql
+CREATE TABLE brands (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE
+);
+```
+
+---
+
+## Models
+
+```sql
+CREATE TABLE models (
+    id BIGSERIAL PRIMARY KEY,
+    brand_id BIGINT REFERENCES brands(id),
+    name VARCHAR(255)
+);
+```
+
+---
+
+## Variants
+
+```sql
+CREATE TABLE variants (
+    id BIGSERIAL PRIMARY KEY,
+    model_id BIGINT REFERENCES models(id),
+    name VARCHAR(255)
+);
+```
+
+---
+
+## Products
+
+```sql
+CREATE TABLE products (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    description TEXT,
+    price NUMERIC,
+    image_url TEXT
+);
+```
+
+---
+
+## Product Compatibility
+
+```sql
+CREATE TABLE product_compatibility (
+    product_id BIGINT,
+    variant_id BIGINT,
+
+    PRIMARY KEY (
+      product_id,
+      variant_id
+    )
+);
+```
+
+---
+
+## Saved Vehicles
+
+```sql
+CREATE TABLE user_saved_cars (
+    user_id BIGINT,
+    variant_id BIGINT,
+
+    PRIMARY KEY (
+      user_id,
+      variant_id
+    )
+);
+```
+
+---
+
+## Campaigns
+
+```sql
+CREATE TABLE campaigns (
+    id BIGSERIAL PRIMARY KEY,
+
+    title VARCHAR(255),
+
+    subject VARCHAR(255),
+
+    content TEXT,
+
+    status VARCHAR(20)
+    DEFAULT 'DRAFT',
+
+    created_at TIMESTAMP
+    DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+## Campaign Products
+
+```sql
+CREATE TABLE campaign_products (
+    campaign_id BIGINT,
+    product_id BIGINT,
+
+    PRIMARY KEY (
+      campaign_id,
+      product_id
+    )
+);
+```
+
+---
+
+# 📚 API Endpoints
+
+## Authentication
+
+### Register
+
+```http
+POST /api/auth/register
+```
+
+### Login
+
+```http
+POST /api/auth/login
+```
+
+---
+
+## Vehicles
+
+### Create Brand
+
+```http
+POST /api/vehicles/brands
+```
+
+### Create Model
+
+```http
+POST /api/vehicles/models
+```
+
+### Create Variant
+
+```http
+POST /api/vehicles/variants
+```
+
+### Get Brands
+
+```http
+GET /api/vehicles/brands
+```
+
+### Get Models By Brand
+
+```http
+GET /api/vehicles/brands/:brandId/models
+```
+
+### Get Variants By Model
+
+```http
+GET /api/vehicles/models/:modelId/variants
+```
+
+---
+
+## Products
+
+### Create Product
+
+```http
+POST /api/products
+```
+
+### Upload Product Image
+
+```http
+POST /api/products/:id/image
+```
+
+### Add Compatibility
+
+```http
+POST /api/products/:id/compatibility
+```
+
+### Get Products
+
+```http
+GET /api/products
+```
+
+### Get Product
+
+```http
+GET /api/products/:id
+```
+
+---
+
+## Saved Vehicles
+
+### Save Vehicle
+
+```http
+POST /api/saved-vehicles
+```
+
+### Get Saved Vehicles
+
+```http
+GET /api/saved-vehicles
+```
+
+---
+
+## Catalog
+
+### Get Personalized Catalog
+
+```http
+GET /api/catalog
+```
+
+---
+
+## Campaigns
+
+### Create And Send Campaign
+
+```http
+POST /api/campaigns/send
+```
+
+### Get Campaigns
+
+```http
+GET /api/campaigns
+```
+
+### Get Campaign Details
+
+```http
+GET /api/campaigns/:campaignId
+```
+
+---
+
+# 🔄 Catalog Flow
+
+```text
+User
+ │
+ ▼
+Saved Vehicle
+ │
+ ▼
+Variant
+ │
+ ▼
+Product Compatibility
+ │
+ ▼
+Products
+ │
+ ▼
+Personalized Catalog
+```
+
+---
+
+# 📧 Campaign Flow
+
+```text
+Campaign
+ │
+ ▼
+Campaign Products
+ │
+ ▼
+Compatible Variants
+ │
+ ▼
+Saved Vehicles
+ │
+ ▼
+Users
+ │
+ ▼
+BullMQ
+ │
+ ▼
+Redis
+ │
+ ▼
+Worker
+ │
+ ▼
+Resend
+ │
+ ▼
+Inbox
+```
+
+---
+
+# ⚡ BullMQ Workflow
+
+```text
+Campaign Service
+       │
+       ▼
+queueEmail()
+       │
+       ▼
+BullMQ Queue
+       │
+       ▼
+Redis
+       │
+       ▼
+Worker
+       │
+       ▼
+Email Service
+       │
+       ▼
+Resend
+```
+
+---
+
+# 🔁 Retry Strategy
+
+Each email job is configured with:
+
+```javascript
+attempts: 3
+
+backoff: {
+  type: "exponential",
+  delay: 5000
+}
+```
+
+Example:
+
+```text
+Attempt 1
+   ↓
+Fail
+   ↓
+5 Seconds
+
+Attempt 2
+   ↓
+Fail
+   ↓
+10 Seconds
+
+Attempt 3
+   ↓
+Fail
+   ↓
+Marked Failed
+```
+
+---
+
+# 🚀 Running The Project
+
+## Install Dependencies
+
+```bash
+npm install
+```
+
+## Configure Environment
+
+```env
+DATABASE_URL=
+
+JWT_SECRET=
+
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+
+RESEND_API_KEY=
+```
+
+## Start Backend
+
+```bash
+npm run dev
+```
+
+## Start Worker
+
+```bash
+node worker.js
+```
+
+---
+
+# 📈 Future Improvements
+
+* Zod Validation
+* Swagger Documentation
+* Campaign Analytics
+* Dashboard APIs
+* Docker Support
+* Automated Testing
+
+---
+
+# 👨‍💻 Author
+
+Developed as a portfolio-grade backend project demonstrating:
+
+* REST API Design
+* Layered Architecture
+* PostgreSQL
+* Redis
+* BullMQ
+* Background Job Processing
+* Email Campaign Systems
+* Cloudinary Integration
+* Authentication & Authorization
