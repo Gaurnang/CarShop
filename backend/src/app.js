@@ -4,7 +4,8 @@ import authRoutes from "./routes/authRoutes.js";
 import brandRoutes from "./routes/brandRoutes.js";
 import modelRoutes from "./routes/modelRoutes.js";
 import variantRoutes from "./routes/variantRoutes.js";
-
+import productRoutes from "./routes/productRoutes.js";
+import productCompatibilityRoutes from "./routes/productCompatibilityRoutes.js";
 
 const app = express();
 
@@ -14,6 +15,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/brands", brandRoutes);
 app.use("/api/models", modelRoutes);
 app.use("/api/variants", variantRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/products", productCompatibilityRoutes);
 
 app.get("/", (req, res) => {
   res.json({
