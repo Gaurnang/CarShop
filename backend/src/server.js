@@ -1,8 +1,10 @@
-import dotenv from "dotenv";
+import "dotenv/config";
+
 import app from "./app.js";
 import pool from "./config/db.js";
+import "dotenv/config";
 
-dotenv.config();
+console.log(process.env.ADMIN_EMAIL);
 
 const PORT = process.env.PORT || 5000;
 
