@@ -10,7 +10,6 @@ const PORT = process.env.PORT || 5000;
 
 async function startServer() {
   try {
-    await pool.query("SELECT NOW()");
 
     console.log("✅ Connected to Neon PostgreSQL");
 
