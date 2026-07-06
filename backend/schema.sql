@@ -1,13 +1,13 @@
 CREATE TABLE car_brands (
     id BIGSERIAL PRIMARY KEY,
+
     name VARCHAR(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE car_models (
     id BIGSERIAL PRIMARY KEY,
-    brand_id BIGINT NOT NULL
-        REFERENCES car_brands(id)
-        ON DELETE CASCADE,
+
+    brand_id BIGINT NOT NULL REFERENCES car_brands(id) ON DELETE CASCADE,
 
     name VARCHAR(100) NOT NULL,
 
@@ -17,9 +17,7 @@ CREATE TABLE car_models (
 CREATE TABLE car_variants (
     id BIGSERIAL PRIMARY KEY,
 
-    model_id BIGINT NOT NULL
-        REFERENCES car_models(id)
-        ON DELETE CASCADE,
+    model_id BIGINT NOT NULL REFERENCES car_models(id) ON DELETE CASCADE,
 
     name VARCHAR(100) NOT NULL,
 
@@ -27,15 +25,16 @@ CREATE TABLE car_variants (
 );
 
 CREATE TABLE categories (
+
     id BIGSERIAL PRIMARY KEY,
+
     name VARCHAR(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE products (
     id BIGSERIAL PRIMARY KEY,
 
-    category_id BIGINT
-        REFERENCES categories(id),
+    category_id BIGINT REFERENCES categories(id),
 
     name VARCHAR(255) NOT NULL,
 
@@ -53,9 +52,7 @@ CREATE TABLE products (
 CREATE TABLE product_images (
     id BIGSERIAL PRIMARY KEY,
 
-    product_id BIGINT NOT NULL
-        REFERENCES products(id)
-        ON DELETE CASCADE,
+    product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
 
     image_url TEXT NOT NULL,
 
@@ -65,13 +62,9 @@ CREATE TABLE product_images (
 CREATE TABLE product_compatibility (
     id BIGSERIAL PRIMARY KEY,
 
-    product_id BIGINT NOT NULL
-        REFERENCES products(id)
-        ON DELETE CASCADE,
+    product_id BIGINT NOT NULL REFERENCES products(id)  ON DELETE CASCADE,
 
-    variant_id BIGINT NOT NULL
-        REFERENCES car_variants(id)
-        ON DELETE CASCADE,
+    variant_id BIGINT NOT NULL REFERENCES car_variants(id)  ON DELETE CASCADE,
 
     UNIQUE(product_id, variant_id)
 );
@@ -85,9 +78,7 @@ CREATE TABLE users (
 
     password VARCHAR(255) NOT NULL,
 
-    role VARCHAR(20)
-        CHECK(role IN ('ADMIN', 'CUSTOMER'))
-        DEFAULT 'CUSTOMER',
+    role VARCHAR(20) CHECK(role IN ('ADMIN', 'CUSTOMER')) DEFAULT 'CUSTOMER',
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
@@ -97,13 +88,9 @@ CREATE TABLE users (
 CREATE TABLE user_saved_cars (
     id BIGSERIAL PRIMARY KEY,
 
-    user_id BIGINT NOT NULL
-        REFERENCES users(id)
-        ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 
-    variant_id BIGINT NOT NULL
-        REFERENCES car_variants(id)
-        ON DELETE CASCADE,
+    variant_id BIGINT NOT NULL REFERENCES car_variants(id) ON DELETE CASCADE,
 
     nickname VARCHAR(100),
 
@@ -124,8 +111,7 @@ CREATE TABLE campaigns (
 
     content TEXT NOT NULL,
 
-    created_by BIGINT
-        REFERENCES users(id),
+    created_by BIGINT REFERENCES users(id),
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
@@ -133,13 +119,9 @@ CREATE TABLE campaigns (
 );
 
 CREATE TABLE campaign_products (
-    campaign_id BIGINT NOT NULL
-        REFERENCES campaigns(id)
-        ON DELETE CASCADE,
+    campaign_id BIGINT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
 
-    product_id BIGINT NOT NULL
-        REFERENCES products(id)
-        ON DELETE CASCADE,
+    product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
 
     PRIMARY KEY(campaign_id, product_id)
 );

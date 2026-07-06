@@ -16,6 +16,7 @@ import {
 }
 from "../repositories/variantRepository.js";
 
+
 export const assignCompatibility = async (
     productId,
     variantIds
