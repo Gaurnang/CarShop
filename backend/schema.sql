@@ -94,8 +94,6 @@ CREATE TABLE user_saved_cars (
 
     nickname VARCHAR(100),
 
-    is_primary BOOLEAN DEFAULT FALSE,
-
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     UNIQUE(user_id, variant_id)
