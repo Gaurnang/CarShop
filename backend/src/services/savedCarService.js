@@ -56,26 +56,48 @@ export const fetchUserCars = async (
 export const editSavedCar = async (
   userId,
   id,
+  variantId,
   nickname
 ) => {
 
-  const car =
+  const savedCar =
     await getSavedCarById(id);
 
-  if (!car) {
-    throw new Error(
-      "Saved car not found"
-    );
+  if (!savedCar) {
+    throw new Error("Saved car not found");
   }
 
-  if (car.user_id !== userId) {
+  if (savedCar.user_id !== userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const variant =
+    await getVariantById(
+      variantId
+    );
+
+  if (!variant) {
+    throw new Error("Variant not found");
+  }
+
+  const duplicate =
+    await getSavedCar(
+      userId,
+      variantId
+    );
+
+  if (
+    duplicate &&
+    duplicate.id !== Number(id)
+  ) {
     throw new Error(
-      "Unauthorized"
+      "Vehicle already saved"
     );
   }
 
   return await updateSavedCar(
     id,
+    variantId,
     nickname
   );
 

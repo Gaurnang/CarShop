@@ -99,20 +99,28 @@ export const getSavedCarById = async (
 
 export const updateSavedCar = async (
   id,
+  variantId,
   nickname
 ) => {
+
   const result = await pool.query(
     `
     UPDATE user_saved_cars
     SET
-        nickname=$1
-    WHERE id=$2
+        variant_id = $1,
+        nickname = $2
+    WHERE id = $3
     RETURNING *;
     `,
-    [nickname, id]
+    [
+      variantId,
+      nickname,
+      id
+    ]
   );
 
   return result.rows[0];
+
 };
 
 export const deleteSavedCar = async (
