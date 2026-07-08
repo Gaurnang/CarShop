@@ -8,6 +8,7 @@ import productRoutes from "./routes/productRoutes.js";
 import productCompatibilityRoutes from "./routes/productCompatibilityRoutes.js";
 import savedCarRoutes from "./routes/savedCarRoutes.js";
 import catalogRoutes from "./routes/catalogRoutes.js";
+import campaignRoutes from "./routes/campaignRoutes.js";
 
 const app = express();
 
@@ -21,7 +22,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/products", productCompatibilityRoutes);
 app.use("/api/my-cars", savedCarRoutes);
 app.use("/api/catalog", catalogRoutes);
-
+app.use("/api/campaigns",campaignRoutes);
 
 
 app.get("/", (req, res) => {
