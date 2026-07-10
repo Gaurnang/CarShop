@@ -154,7 +154,6 @@ async (
 };
 
 export const sendCampaign = async (req, res) => {
-  console.log("Controller reached");
 
   try {
     const total = await campaignService.sendCampaign(req.params.id);

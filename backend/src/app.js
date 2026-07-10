@@ -28,6 +28,7 @@ app.use("/api/catalog", catalogRoutes);//
 app.use("/api/campaigns",campaignRoutes);//
 app.use("/api/users", userRoutes);
 
+console.log("Hello");
 
 app.get("/", (req, res) => {
   res.json({
