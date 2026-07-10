@@ -13,7 +13,6 @@ export const create = async (req, res) => {
       name,
       description,
       price,
-      imageUrl,
     } = req.body;
 
     const product =
@@ -21,7 +20,6 @@ export const create = async (req, res) => {
         name,
         description,
         price,
-        imageUrl
       );
 
     res.status(201).json({

@@ -10,8 +10,7 @@ import {
 export const addProduct = async (
   name,
   description,
-  price,
-  imageUrl
+  price
 ) => {
   const existing =
     await getProductByName(name);
@@ -23,8 +22,7 @@ export const addProduct = async (
   return await createProduct(
     name,
     description,
-    price,
-    imageUrl
+    price
   );
 };
 

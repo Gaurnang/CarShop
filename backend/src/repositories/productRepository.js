@@ -12,13 +12,12 @@ export const createProduct = async (
     (
         name,
         description,
-        price,
-        image_url
+        price
     )
-    VALUES ($1,$2,$3,$4)
+    VALUES ($1,$2,$3)
     RETURNING *;
     `,
-    [name, description, price, imageUrl]
+    [name, description, price]
   );
 
   return result.rows[0];
@@ -67,7 +66,6 @@ export const updateProduct = async (
   name,
   description,
   price,
-  imageUrl,
   isActive
 ) => {
   const result = await pool.query(
@@ -77,7 +75,6 @@ export const updateProduct = async (
         name=$1,
         description=$2,
         price=$3,
-        image_url=$4,
         is_active=$5,
         updated_at=CURRENT_TIMESTAMP
     WHERE id=$6
@@ -87,7 +84,6 @@ export const updateProduct = async (
       name,
       description,
       price,
-      imageUrl,
       isActive,
       id,
     ]

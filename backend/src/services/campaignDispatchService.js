@@ -1,32 +1,38 @@
 import campaignQueue from "../queues/campaignQueue.js";
 
-export const dispatchCampaign = async (
-  users,
-  campaign
+export const queueCampaign = async (
+    user,
+    campaign
 ) => {
 
-  for (const user of users) {
-
     await campaignQueue.add(
-      "send-email",
 
-      {
-        user,
-        campaign
-      },
+        "campaign",
 
-      {
-        attempts: 3,
+        {
 
-        backoff: {
-          type: "exponential",
-          delay: 3000
+            user,
+
+            campaign
+
         },
 
-        removeOnComplete: true
-      }
-    );
+        {
 
-  }
+            attempts: 3,
+
+            backoff: {
+
+                type: "exponential",
+
+                delay: 5000
+
+            },
+
+            removeOnComplete: true
+
+        }
+
+    );
 
 };

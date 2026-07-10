@@ -9,7 +9,6 @@ export const getCatalog = async (userId) => {
         p.name,
         p.description,
         p.price,
-        p.image_url,
         p.is_active
 
     FROM user_saved_cars usc
@@ -43,7 +42,6 @@ export const getCatalogBySavedCar = async (
         p.name,
         p.description,
         p.price,
-        p.image_url,
         p.is_active
 
     FROM user_saved_cars usc

@@ -103,39 +103,35 @@ export const deleteCampaign = async (
   );
 };
 
-export const getEligibleUsers = async (
-  campaignId
-) => {
+export const getEligibleUsers = async (campaignId) => {
 
-  const result = await pool.query(
-    `
-    SELECT DISTINCT
+    const result = await pool.query(
 
-        u.id,
-        u.name,
-        u.email
+        `
+        SELECT DISTINCT
 
-    FROM campaigns c
+            u.id,
+            u.name,
+            u.email
 
-    JOIN campaign_products cp
-        ON c.id = cp.campaign_id
+        FROM campaign_products cp
 
-    JOIN product_compatibility pc
+        JOIN product_compatibility pc
         ON cp.product_id = pc.product_id
 
-    JOIN user_saved_cars usc
+        JOIN user_saved_cars usc
         ON pc.variant_id = usc.variant_id
 
-    JOIN users u
+        JOIN users u
         ON usc.user_id = u.id
 
-    WHERE c.id = $1
+        WHERE cp.campaign_id = $1
+        `,
 
-    ORDER BY u.name;
-    `,
-    [campaignId]
-  );
+        [campaignId]
 
-  return result.rows;
+    );
+
+    return result.rows;
 
 };

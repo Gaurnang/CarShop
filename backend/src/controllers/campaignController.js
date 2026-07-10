@@ -5,6 +5,12 @@ import {
   removeCampaign
 } from "../services/campaignService.js";
 
+import * as campaignService from "../services/campaignService.js";
+
+import {
+  fetchEligibleUsers
+} from "../services/campaignService.js";
+
 export const create = async (
   req,
   res
@@ -115,4 +121,54 @@ export const remove = async (
 
   }
 
+};
+
+export const getEligibleUsersForCampaign =
+async (
+  req,
+  res
+) => {
+
+  try {
+
+    const users =
+      await fetchEligibleUsers(
+        req.params.id
+      );
+
+    res.json({
+      success: true,
+      data: users
+    });
+
+  }
+  catch (error) {
+
+    res.status(404).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+
+};
+
+export const sendCampaign = async (req, res) => {
+  console.log("Controller reached");
+
+  try {
+    const total = await campaignService.sendCampaign(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      message: `${total} jobs added to queue.`,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };

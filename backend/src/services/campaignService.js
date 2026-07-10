@@ -11,6 +11,14 @@ import {
   getProductById
 } from "../repositories/productRepository.js";
 
+import {
+  getEligibleUsers
+} from "../repositories/campaignRepository.js";
+
+import {
+    queueCampaign
+} from "./campaignDispatchService.js";
+
 export const createNewCampaign = async (
   title,
   subject,
@@ -89,5 +97,53 @@ async (id) => {
   }
 
   await deleteCampaign(id);
+
+};
+
+export const fetchEligibleUsers = async (
+  campaignId
+) => {
+
+  const campaign =
+    await getCampaignById(campaignId);
+
+  if (!campaign) {
+    throw new Error("Campaign not found");
+  }
+
+  return await getEligibleUsers(
+    campaignId
+  );
+
+};
+
+export const sendCampaign = async (
+    campaignId
+) => {
+
+    const campaign =
+        await getCampaignById(campaignId);
+
+    if (!campaign) {
+
+        throw new Error(
+            "Campaign not found"
+        );
+
+    }
+
+    const users =
+        await getEligibleUsers(campaignId);
+
+    for (const user of users) {
+
+        await queueCampaign(
+            user,
+            campaign
+        );
+
+    }
+
+    return users.length;
 
 };

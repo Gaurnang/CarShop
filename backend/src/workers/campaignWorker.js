@@ -2,19 +2,35 @@ import { Worker } from "bullmq";
 import redis from "../config/redis.js";
 
 const worker = new Worker(
-  "campaign-email",
 
-  async (job) => {
+    "campaign",
 
-    console.log(job.data);
+    async(job)=>{
 
-    // Resend integration comes here later
+        console.log("Job Started");
 
-  },
+        console.log(job.data);
 
-  {
-    connection: redis
-  }
+        console.log("Job Finished");
+
+    },
+
+    {
+        connection:redis
+    }
+
 );
+
+worker.on("completed",(job)=>{
+
+    console.log(`Completed ${job.id}`);
+
+});
+
+worker.on("failed",(job,error)=>{
+
+    console.log(error.message);
+
+});
 
 export default worker;
