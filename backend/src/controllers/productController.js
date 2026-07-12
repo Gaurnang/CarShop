@@ -6,6 +6,8 @@ import {
   removeProduct,
 } from "../services/productService.js";
 
+import * as productImageService from "../services/productImageService.js";
+
 export const create = async (req, res) => {
   try {
 
@@ -138,4 +140,44 @@ export const remove = async (req, res) => {
     });
 
   }
+};
+
+export const uploadProductImages = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const images =
+            await productImageService.uploadProductImages(
+
+                req.params.id,
+
+                req.files
+
+            );
+
+        res.status(201).json({
+
+            success: true,
+
+            data: images
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(400).json({
+
+            success: false,
+
+            message: error.message
+
+        });
+
+    }
+
 };

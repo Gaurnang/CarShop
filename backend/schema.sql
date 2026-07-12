@@ -54,6 +54,8 @@ CREATE TABLE product_images (
 
     product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
 
+    public_id VARCHAR(255) NOT NULL,
+
     image_url TEXT NOT NULL,
 
     display_order INT DEFAULT 1

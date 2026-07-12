@@ -2,9 +2,8 @@ import "dotenv/config";
 
 import app from "./app.js";
 import pool from "./config/db.js";
-import "dotenv/config";
+import cloudinary from "./config/cloudinary.js";
 
-console.log(process.env.ADMIN_EMAIL);
 
 const PORT = process.env.PORT || 5000;
 
