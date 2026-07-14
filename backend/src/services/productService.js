@@ -1,10 +1,11 @@
 import {
   createProduct,
   deleteProduct,
-  getAllProducts,
+  getProducts,
   getProductById,
   getProductByName,
   updateProduct,
+  countProducts
 } from "../repositories/productRepository.js";
 
 export const addProduct = async (
@@ -26,8 +27,39 @@ export const addProduct = async (
   );
 };
 
-export const fetchProducts = async () => {
-  return await getAllProducts();
+export const fetchProducts = async (filters) => {
+
+    const products = await getProducts(filters);
+
+    const total = await countProducts(filters);
+
+    const page = Number(filters.page) || 1;
+    const limit = Number(filters.limit) || 10;
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+
+        products,
+
+        pagination: {
+
+            page,
+
+            limit,
+
+            total,
+
+            totalPages,
+
+            hasNext: page < totalPages,
+
+            hasPrevious: page > 1
+
+        }
+
+    };
+
 };
 
 export const fetchProduct = async (id) => {

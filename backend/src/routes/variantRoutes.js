@@ -20,12 +20,7 @@ router.get("/model/:modelId", getByModel);
 
 router.get("/:id", getOne);
 
-router.post(
-  "/",
-  authMiddleware,
-  adminMiddleware,
-  create
-);
+router.post("/", authMiddleware, adminMiddleware, create);
 
 router.put(
   "/:id",

@@ -19,16 +19,19 @@ import {
 
 const router = express.Router();
 
+router.use(authMiddleware);
+router.use(adminMiddleware);
+
 router.get("/", getAll);
 
 router.get("/:id", getOne);
 
-router.post("/", authMiddleware, adminMiddleware, create);
+router.post("/", create);
 
-router.put("/:id", authMiddleware, adminMiddleware, update);
+router.put("/:id", update);
 
-router.delete("/:id", authMiddleware, adminMiddleware, remove);
+router.delete("/:id", remove);
 
-router.post("/:id/images", authMiddleware, adminMiddleware, upload.array("images", 10),  uploadProductImages);
+router.post("/:id/images", upload.array("images", 10),  uploadProductImages);
 
 export default router;

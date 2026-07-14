@@ -42,12 +42,13 @@ export const create = async (req, res) => {
 export const getAll = async (req, res) => {
   try {
 
-    const products =
-      await fetchProducts();
+    const results =
+      await fetchProducts(req.query);
 
     res.json({
       success: true,
-      data: products,
+      data: results.products,
+      pagination : results.pagination
     });
 
   } catch (error) {

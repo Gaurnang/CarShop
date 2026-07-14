@@ -18,6 +18,8 @@ services:
     depends_on:
       - redis
 
+    restart: unless-stopped
+
     command: npm run dev
 
   redis:
