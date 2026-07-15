@@ -1,39 +1,127 @@
 import {
-  getCatalog,
-  getCatalogBySavedCar,
+    getCatalogProducts,
+    countCatalogProducts,
+    getCatalogProductById as getCatalogProductByIdRepo
 } from "../repositories/catalogRepository.js";
 
 import {
-  getSavedCarById,
+    getVariantIdsFromSavedCars
 } from "../repositories/savedCarRepository.js";
 
-export const fetchCatalog = async (
-  userId
+export const getCatalog = async (
+    userId,
+    filters
 ) => {
 
-  return await getCatalog(userId);
+    let variantIds = [];
+
+    // Only apply compatibility filtering if the user is logged in
+    // and has provided savedCarId(s).
+    if (userId && filters.savedCarId) {
+
+        const savedCarIds = filters.savedCarId
+
+            .split(",")
+
+            .map(id => Number(id.trim()))
+
+            .filter(id => !Number.isNaN(id));
+
+        variantIds = await getVariantIdsFromSavedCars(
+
+            userId,
+
+            savedCarIds
+
+        );
+
+        // Optional: reject invalid savedCarIds
+        if (
+
+            savedCarIds.length > 0 &&
+
+            variantIds.length === 0
+
+        ) {
+
+            throw new Error(
+
+                "Invalid saved car."
+
+            );
+
+        }
+
+    }
+
+    const products = await getCatalogProducts(
+
+        filters,
+
+        variantIds
+
+    );
+
+    const total = await countCatalogProducts(
+
+        filters,
+
+        variantIds
+
+    );
+
+    const page = Number(
+
+        filters.page || 1
+
+    );
+
+    const limit = Number(
+
+        filters.limit || 10
+
+    );
+
+    return {
+
+        products,
+
+        pagination: {
+
+            page,
+
+            limit,
+
+            total,
+
+            totalPages: Math.ceil(
+
+                total / limit
+
+            )
+
+        }
+
+    };
 
 };
 
-export const fetchCatalogForCar = async (
-  userId,
-  savedCarId
+export const getCatalogProductById = async (
+    id
 ) => {
 
-  const car =
-    await getSavedCarById(savedCarId);
+    const product = await getCatalogProductByIdRepo(id);
 
-  if (!car) {
-    throw new Error("Saved car not found");
-  }
+    if (!product) {
 
-  if (car.user_id !== userId) {
-    throw new Error("Unauthorized");
-  }
+        throw new Error(
 
-  return await getCatalogBySavedCar(
-    userId,
-    savedCarId
-  );
+            "Product not found."
+
+        );
+
+    }
+
+    return product;
 
 };

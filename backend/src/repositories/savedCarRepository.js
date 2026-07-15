@@ -135,3 +135,39 @@ export const deleteSavedCar = async (
     [id]
   );
 };
+
+export const getVariantIdsFromSavedCars = async (
+    userId,
+    savedCarIds
+) => {
+
+    const result = await pool.query(
+
+        `
+        SELECT
+
+            variant_id
+
+        FROM user_saved_cars
+
+        WHERE
+
+            user_id = $1
+
+            AND id = ANY($2::int[])
+        `,
+
+        [
+            userId,
+            savedCarIds
+        ]
+
+    );
+
+    return result.rows.map(
+
+        row => row.variant_id
+
+    );
+
+};

@@ -1,18 +1,17 @@
 import express from "express";
 
-import authMiddleware from "../middleware/authMiddleware.js";
+import optionalAuthMiddleware from "../middleware/optionalAuthMiddleware.js";
 
 import {
-  getAllProducts,
-  getProductsBySavedCar,
+    getCatalog,
+    getCatalogProductById
+
 } from "../controllers/catalogController.js";
 
 const router = express.Router();
 
-router.use(authMiddleware);
+router.get("/", optionalAuthMiddleware, getCatalog);
 
-router.get("/", getAllProducts);
-
-router.get("/car/:savedCarId", getProductsBySavedCar);
+router.get("/:id", getCatalogProductById);
 
 export default router;

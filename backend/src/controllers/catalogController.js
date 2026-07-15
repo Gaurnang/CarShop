@@ -1,61 +1,77 @@
-import {
-  fetchCatalog,
-  fetchCatalogForCar,
-} from "../services/catalogService.js";
+import * as catalogService from "../services/catalogService.js";
 
-export const getAllProducts = async (
-  req,
-  res
+export const getCatalog = async (
+    req,
+    res
 ) => {
 
-  try {
+    try {
 
-    const products =
-      await fetchCatalog(
-        req.user.id
-      );
+        const data = await catalogService.getCatalog(
 
-    res.json({
-      success: true,
-      data: products,
-    });
+            req.user?.id,
 
-  } catch (error) {
+            req.query
 
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+        );
 
-  }
+        res.status(200).json({
+
+            success: true,
+
+            data
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(400).json({
+
+            success: false,
+
+            message: error.message
+
+        });
+
+    }
 
 };
 
-export const getProductsBySavedCar = async (
-  req,
-  res
+export const getCatalogProductById = async (
+    req,
+    res
 ) => {
 
-  try {
+    try {
 
-    const products =
-      await fetchCatalogForCar(
-        req.user.id,
-        req.params.savedCarId
-      );
+        const product = await catalogService.getCatalogProductById(
 
-    res.json({
-      success: true,
-      data: products,
-    });
+            req.params.id
 
-  } catch (error) {
+        );
 
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+        res.status(200).json({
 
-  }
+            success: true,
+
+            data: product
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(404).json({
+
+            success: false,
+
+            message: error.message
+
+        });
+
+    }
 
 };
