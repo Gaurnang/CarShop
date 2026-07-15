@@ -11,6 +11,9 @@ import catalogRoutes from "./routes/catalogRoutes.js";
 import campaignRoutes from "./routes/campaignRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import "./workers/campaignWorker.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
+
+
 
 
 const app = express();
@@ -28,6 +31,7 @@ app.use("/api/my-cars", savedCarRoutes);//
 app.use("/api/catalog", catalogRoutes);//
 app.use("/api/campaigns",campaignRoutes);//
 app.use("/api/users", userRoutes);
+app.use("/api/categories", categoryRoutes);
 
 
 app.get("/", (req, res) => {
