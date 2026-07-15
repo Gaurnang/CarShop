@@ -1,6 +1,7 @@
 import { Worker } from "bullmq";
 import redis from "../config/redis.js";
 import resend from "../config/resend.js";
+import { campaignEmailTemplate } from "../utils/emailTemplate.js";
 
 const worker = new Worker(
 
@@ -20,11 +21,14 @@ const worker = new Worker(
 
             from: "CarShop <onboarding@resend.dev>",
 
-            to: process.env.ADMIN_EMAIL,
+            to: user.email,
 
             subject: campaign.subject,
 
-            html: campaign.content
+            html: campaignEmailTemplate(
+                user,
+                campaign
+            )
 
         });
 
