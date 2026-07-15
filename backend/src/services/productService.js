@@ -8,10 +8,15 @@ import {
   countProducts
 } from "../repositories/productRepository.js";
 
+import {
+  getCategoryById
+} from "../repositories/categoryRepository.js"
+
 export const addProduct = async (
   name,
   description,
-  price
+  price,
+  categoryId
 ) => {
   const existing =
     await getProductByName(name);
@@ -20,10 +25,22 @@ export const addProduct = async (
     throw new Error("Product already exists");
   }
 
+  if(!categoryId) {
+    throw new Error("Category is required");
+  }
+
+  const checkCategory = await getCategoryById(categoryId);
+
+  if(!checkCategory) {
+    throw new Error("Category not found");
+  }
+  
+  
   return await createProduct(
     name,
     description,
-    price
+    price,
+    categoryId
   );
 };
 

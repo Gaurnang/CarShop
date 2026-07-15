@@ -3,7 +3,8 @@ import pool from "../config/db.js";
 export const createProduct = async (
     name,
     description,
-    price
+    price,
+    categoryId
 ) => {
 
     const result = await pool.query(
@@ -13,21 +14,24 @@ export const createProduct = async (
         (
             name,
             description,
-            price
+            price,
+            category_id
         )
         VALUES
         (
-            $1,$2,$3
+            $1,
+            $2,
+            $3,
+            $4
         )
         RETURNING *;
         `,
 
         [
-
             name,
             description,
-            price
-
+            price,
+            categoryId
         ]
 
     );
