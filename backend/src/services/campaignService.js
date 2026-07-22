@@ -28,7 +28,6 @@ import {
     getCampaignRecipients,
 } from "../repositories/campaignRecipientRepository.js";
 
-import { getCampaignById } from "../repositories/campaignRepository.js";
 
 
 export const createNewCampaign = async (
