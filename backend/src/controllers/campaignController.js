@@ -2,7 +2,9 @@ import {
   createNewCampaign,
   fetchCampaigns,
   fetchCampaign,
-  removeCampaign
+  removeCampaign,
+  getCampaignAnalyticsService,
+  getCampaignRecipientsService
 } from "../services/campaignService.js";
 
 import * as campaignService from "../services/campaignService.js";
@@ -123,8 +125,7 @@ export const remove = async (
 
 };
 
-export const getEligibleUsersForCampaign =
-async (
+export const getEligibleUsersForCampaign = async (
   req,
   res
 ) => {
@@ -170,4 +171,40 @@ export const sendCampaign = async (req, res) => {
       message: error.message,
     });
   }
+};
+
+export const getCampaignAnalytics = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const analytics = await getCampaignAnalyticsService(id);
+
+        res.status(200).json({
+            success: true,
+            message: "Campaign analytics fetched successfully.",
+            analytics,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getCampaignRecipients = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.query;
+
+        const recipients = await getCampaignRecipientsService(
+            id,
+            status
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Campaign recipients fetched successfully.",
+            recipients,
+        });
+    } catch (error) {
+        next(error);
+    }
 };

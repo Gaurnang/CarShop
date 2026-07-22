@@ -67,27 +67,67 @@ export const getCampaignById = async (
 };
 
 export const getCampaignProducts = async (
-  campaignId
+    campaignId
 ) => {
-  const result = await pool.query(
-    `
-    SELECT
 
-        p.id,
-        p.name,
-        p.price
+    const result = await pool.query(
 
-    FROM campaign_products cp
+        `
+        SELECT
 
-    JOIN products p
+            p.id,
+
+            p.name,
+
+            p.price,
+
+            (
+
+                SELECT
+
+                    COALESCE(
+
+                        json_agg(
+
+                            json_build_object(
+
+                                'id', pi.id,
+
+                                'imageUrl', pi.image_url,
+
+                                'displayOrder', pi.display_order
+
+                            )
+
+                            ORDER BY pi.display_order
+
+                        ),
+
+                        '[]'
+
+                    )
+
+                FROM product_images pi
+
+                WHERE pi.product_id = p.id
+
+            ) AS images
+
+        FROM campaign_products cp
+
+        JOIN products p
+
         ON cp.product_id = p.id
 
-    WHERE cp.campaign_id = $1;
-    `,
-    [campaignId]
-  );
+        WHERE cp.campaign_id = $1;
+        `,
 
-  return result.rows;
+        [campaignId]
+
+    );
+
+    return result.rows;
+
 };
 
 export const deleteCampaign = async (

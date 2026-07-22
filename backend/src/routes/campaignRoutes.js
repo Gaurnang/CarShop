@@ -6,7 +6,9 @@ import {
   getOne,
   remove,
   getEligibleUsersForCampaign,
-  sendCampaign
+  sendCampaign,
+  getCampaignAnalytics,
+  getCampaignRecipients
 } from "../controllers/campaignController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -30,5 +32,9 @@ router.delete("/:id", remove);
 router.get("/:id/users", getEligibleUsersForCampaign)
 
 router.post("/:id/send", sendCampaign);
+
+router.get("/:id/analytics", authMiddleware, adminMiddleware, getCampaignAnalytics);
+
+router.get("/:id/recipients", authMiddleware, adminMiddleware, getCampaignRecipients);
 
 export default router;

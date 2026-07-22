@@ -1,5 +1,0 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { authApi } from '../services/api';
-const AuthContext = createContext(null);
-export function AuthProvider({ children }) { const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('carshop_user') || 'null')); const logout = () => { localStorage.removeItem('carshop_token'); localStorage.removeItem('carshop_user'); setUser(null); }; const setSession = (session) => { if (!session?.token || !session?.user) throw new Error('Invalid authentication response'); localStorage.setItem('carshop_token', session.token); localStorage.setItem('carshop_user', JSON.stringify(session.user)); setUser(session.user); }; useEffect(() => { window.addEventListener('carshop:logout', logout); return () => window.removeEventListener('carshop:logout', logout); }, []); return <AuthContext.Provider value={{ user, isAdmin: user?.role === 'ADMIN', setSession, logout, refresh: async () => { const next = await authApi.me(); setUser(next); return next; } }}>{children}</AuthContext.Provider>; }
-export const useAuth = () => useContext(AuthContext);

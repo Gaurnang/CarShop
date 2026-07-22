@@ -1,51 +1,46 @@
 import { Worker } from "bullmq";
 import redis from "../config/redis.js";
-import resend from "../config/resend.js";
-import { campaignEmailTemplate } from "../utils/emailTemplate.js";
+import { sendEmail } from "../utils/sendEmail.js";
+import { campaignEmailTemplate } from "../utils/campaignEmailTemplate.js";
+
+import {
+    markRecipientSent,
+    markRecipientFailed,
+} from "../repositories/campaignRecipientRepository.js";
 
 const worker = new Worker(
-
     "campaign",
-
     async (job) => {
 
-        const {
+        const { user, campaign } = job.data;
 
-            user,
+        try {
 
-            campaign
+            await sendEmail({
+                to: user.email,
+                subject: campaign.title,
+                html: campaignEmailTemplate(user, campaign),
+            });
 
-        } = job.data;
+            await markRecipientSent(
+                campaign.id,
+                user.id
+            );
 
-        await resend.emails.send({
+        } catch (error) {
 
-            from: "CarShop <onboarding@resend.dev>",
+            await markRecipientFailed(
+                campaign.id,
+                user.id,
+                error.message
+            );
 
-            to: user.email,
-
-            subject: campaign.subject,
-
-            html: campaignEmailTemplate(
-                user,
-                campaign
-            )
-
-        });
-
-        console.log(
-
-            `Email sent to ${user.email}`
-
-        );
-
+            throw error;
+        }
     },
-
     {
-
-        connection: redis
-
+        connection: redis,
     }
-
 );
 
 export default worker;

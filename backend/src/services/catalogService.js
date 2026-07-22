@@ -15,9 +15,10 @@ export const getCatalog = async (
 
     let variantIds = [];
 
-    // Only apply compatibility filtering if the user is logged in
-    // and has provided savedCarId(s).
-    if (userId && filters.savedCarId) {
+    // Apply compatibility filtering based on savedCarId OR explicit variantId
+    if (filters.variantId) {
+        variantIds.push(Number(filters.variantId));
+    } else if (userId && filters.savedCarId) {
 
         const savedCarIds = filters.savedCarId
 

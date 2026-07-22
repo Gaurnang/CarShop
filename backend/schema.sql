@@ -126,3 +126,24 @@ CREATE TABLE campaign_products (
     PRIMARY KEY(campaign_id, product_id)
 );
 
+CREATE TABLE campaign_recipients (
+
+    id SERIAL PRIMARY KEY,
+
+    campaign_id INT NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+
+    status VARCHAR(20) NOT NULL DEFAULT 'Pending',
+
+    error_message TEXT,
+
+    sent_at TIMESTAMP,
+
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    updated_at TIMESTAMP DEFAULT NOW(),
+
+    UNIQUE(campaign_id, user_id)
+
+);
