@@ -8,6 +8,7 @@ const router = express.Router();
 
 
 app.get("/", authMiddleware, adminMiddleware, getAllUsers);
+
 app.get("/:id", authMiddleware, adminMiddleware, getUserById);
     
 export default router;

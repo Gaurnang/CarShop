@@ -33,8 +33,8 @@ router.get("/:id/users", getEligibleUsersForCampaign)
 
 router.post("/:id/send", sendCampaign);
 
-router.get("/:id/analytics", authMiddleware, adminMiddleware, getCampaignAnalytics);
+router.get("/:id/analytics", getCampaignAnalytics);
 
-router.get("/:id/recipients", authMiddleware, adminMiddleware, getCampaignRecipients);
+router.get("/:id/recipients", getCampaignRecipients);
 
 export default router;

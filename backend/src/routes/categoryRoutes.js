@@ -7,7 +7,6 @@ import adminMiddleware from "../middleware/adminMiddleware.js";
 
 const router = express.Router();
 
-// Public Routes
 router.get(
     "/",
     categoryController.getCategories
