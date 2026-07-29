@@ -37,6 +37,23 @@ export const CatalogPage: React.FC = () => {
     });
   };
 
+  const setParams = (updates: Record<string, string>) => {
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      let resetPage = false;
+      for (const [key, value] of Object.entries(updates)) {
+        if (value) {
+          newParams.set(key, value);
+        } else {
+          newParams.delete(key);
+        }
+        if (key !== 'page') resetPage = true;
+      }
+      if (resetPage && !('page' in updates)) newParams.set('page', '1');
+      return newParams;
+    });
+  };
+
   const { data: savedCarsData } = useSavedCars({ enabled: isAuthenticated });
   
   const { data: categories } = useQuery({
@@ -142,11 +159,10 @@ export const CatalogPage: React.FC = () => {
                 <select
                   value={selectedCarId}
                   onChange={(e) => {
-                    setParam('savedCarId', e.target.value);
                     if (e.target.value) {
-                      setParam('brand', '');
-                      setParam('model', '');
-                      setParam('variant', '');
+                      setParams({ savedCarId: e.target.value, brand: '', model: '', variant: '' });
+                    } else {
+                      setParam('savedCarId', '');
                     }
                   }}
                   className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -178,9 +194,7 @@ export const CatalogPage: React.FC = () => {
               {(brandId || modelId || variantId) && (
                 <button 
                   onClick={() => {
-                    setParam('brand', '');
-                    setParam('model', '');
-                    setParam('variant', '');
+                    setParams({ brand: '', model: '', variant: '' });
                   }}
                   className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground"
                 >
@@ -192,10 +206,7 @@ export const CatalogPage: React.FC = () => {
               <select
                 value={brandId}
                 onChange={(e) => {
-                  setParam('brand', e.target.value);
-                  setParam('model', '');
-                  setParam('variant', '');
-                  setParam('savedCarId', ''); // Reset saved car if using custom filter
+                  setParams({ brand: e.target.value, model: '', variant: '', savedCarId: '' });
                 }}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               >
@@ -206,8 +217,7 @@ export const CatalogPage: React.FC = () => {
               <select
                 value={modelId}
                 onChange={(e) => {
-                  setParam('model', e.target.value);
-                  setParam('variant', '');
+                  setParams({ model: e.target.value, variant: '' });
                 }}
                 disabled={!brandId}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
