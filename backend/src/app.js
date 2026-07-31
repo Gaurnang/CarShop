@@ -12,6 +12,7 @@ import campaignRoutes from "./routes/campaignRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import "./workers/campaignWorker.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import webhookRoutes from "./routes/webhookRoutes.js";
 
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/catalog", catalogRoutes);//
 app.use("/api/campaigns",campaignRoutes);//
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/webhooks", webhookRoutes);
 
 
 app.get("/", (req, res) => {
