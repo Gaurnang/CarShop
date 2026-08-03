@@ -10,9 +10,10 @@ import savedCarRoutes from "./routes/savedCarRoutes.js";
 import catalogRoutes from "./routes/catalogRoutes.js";
 import campaignRoutes from "./routes/campaignRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import "./workers/campaignWorker.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
+import "./workers/campaignWorker.js";
+import "./workers/webhookWorker.js";
 
 
 const app = express();
