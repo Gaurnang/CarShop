@@ -13,6 +13,7 @@ import userRoutes from "./routes/userRoutes.js";
 import "./workers/campaignWorker.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
+import testEmailRoutes from "./routes/testEmailRoutes.js";
 
 
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api/campaigns",campaignRoutes);//
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/webhooks", webhookRoutes);
+app.use("/api/test-email", testEmailRoutes);
 
 
 app.get("/", (req, res) => {

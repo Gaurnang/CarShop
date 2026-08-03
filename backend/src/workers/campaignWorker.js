@@ -15,16 +15,24 @@ const worker = new Worker(
         const { user, campaign } = job.data;
 
         try {
-            await resend.emails.send({
+            const response = await resend.emails.send({
                 from: "CarShop <onboarding@resend.dev>",
                 to: user.email,
                 subject: campaign.subject,
                 html: campaignEmailTemplate(user, campaign),
-            });
+            });   
 
             await markRecipientSent(campaign.id, user.id);
 
-            console.log(`Email sent to ${user.email}`);
+            await saveMessageId(
+                campaign.id,
+                user.id,
+                response.data.id 
+            );
+
+            console.log(response);
+
+            console.log(`Email accepted by Resend for ${user.email}`);
         } catch (error) {
             const isLastAttempt =
                 job.attemptsMade + 1 >= (job.opts.attempts || 1);

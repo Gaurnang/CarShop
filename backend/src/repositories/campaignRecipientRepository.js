@@ -30,19 +30,114 @@ export const createCampaignRecipients = async (campaignId, userIds) => {
     );
 };
 
-export const markRecipientSent = async (campaignId, userId) => {
+export const saveMessageId = async (
+    campaignId,
+    userId,
+    messageId
+) => {
+    await pool.query(
+        `
+        UPDATE campaign_recipients
+        SET
+            message_id = $3,
+            sent_at = NOW(),
+            updated_at = NOW()
+        WHERE campaign_id = $1
+        AND user_id = $2;
+        `,
+        [campaignId, userId, messageId]
+    );
+};
+
+export const markRecipientSent = async (messageId) => {
     await pool.query(
         `
         UPDATE campaign_recipients
         SET
             status = 'Sent',
-            sent_at = NOW(),
-            error_message = NULL,
             updated_at = NOW()
-        WHERE campaign_id = $1
-        AND user_id = $2;
+        WHERE message_id = $1;
         `,
-        [campaignId, userId]
+        [messageId]
+    );
+};
+
+export const markRecipientBounced = async (
+    messageId,
+    errorMessage = null
+) => {
+    await pool.query(
+        `
+        UPDATE campaign_recipients
+        SET
+            status = 'Bounced',
+            error_message = $2,
+            updated_at = NOW()
+        WHERE message_id = $1;
+        `,
+        [messageId, errorMessage]
+    );
+};
+
+export const markRecipientComplained = async (
+    messageId
+) => {
+    await pool.query(
+        `
+        UPDATE campaign_recipients
+        SET
+            status = 'Complained',
+            updated_at = NOW()
+        WHERE message_id = $1;
+        `,
+        [messageId]
+    );
+};
+
+export const markRecipientDelayed = async (
+    messageId
+) => {
+    await pool.query(
+        `
+        UPDATE campaign_recipients
+        SET
+            status = 'Delayed',
+            updated_at = NOW()
+        WHERE message_id = $1;
+        `,
+        [messageId]
+    );
+};
+
+export const markRecipientOpened = async (
+    messageId
+) => {
+    await pool.query(
+        `
+        UPDATE campaign_recipients
+        SET
+            opened_at = COALESCE(opened_at, NOW()),
+            open_count = open_count + 1,
+            updated_at = NOW()
+        WHERE message_id = $1;
+        `,
+        [messageId]
+    );
+};
+
+export const markRecipientClicked = async (
+    messageId
+) => {
+    await pool.query(
+        `
+        UPDATE campaign_recipients
+        SET
+            clicked_at = COALESCE(clicked_at, NOW()),
+            click_count = click_count + 1,
+            updated_at = NOW()
+        WHERE message_id = $1;
+        `,
+        [messageId]
     );
 };
 
@@ -70,19 +165,35 @@ export const getCampaignAnalytics = async (campaignId) => {
         `
         SELECT
 
-            COUNT(*) AS total_recipients,
+            COUNT(*) AS total,
+
+            COUNT(*) FILTER (
+                WHERE status = 'Pending'
+            ) AS pending,
 
             COUNT(*) FILTER (
                 WHERE status = 'Sent'
             ) AS sent,
 
             COUNT(*) FILTER (
+                WHERE status = 'Bounced'
+            ) AS bounced,
+
+            COUNT(*) FILTER (
+                WHERE status = 'Complained'
+            ) AS complained,
+
+            COUNT(*) FILTER (
+                WHERE status = 'Delayed'
+            ) AS delayed,
+
+            COUNT(*) FILTER (
                 WHERE status = 'Failed'
             ) AS failed,
 
-            COUNT(*) FILTER (
-                WHERE status = 'Pending'
-            ) AS pending
+            SUM(open_count) AS opens,
+
+            SUM(click_count) AS clicks
 
         FROM campaign_recipients
 
@@ -111,7 +222,15 @@ export const getCampaignRecipients = async (
 
             cr.error_message,
 
-            cr.sent_at
+            cr.sent_at,
+
+            cr.open_count,
+
+            cr.click_count,
+
+            cr.opened_at,
+
+            cr.clicked_at
 
         FROM campaign_recipients cr
 

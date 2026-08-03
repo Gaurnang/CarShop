@@ -1,17 +1,28 @@
-import { processWebhookEvent } from "../services/webhookService.js";
+import webhookQueue from "../queues/webhookQueue.js";
 
-export const handleResendWebhook = async (req, res) => {
+
+export const handleResendWebhook = async (req, res, next) => {
     try {
+        await webhookQueue.add(
+            "resend-event",
+            req.body,
+            {
+                attempts: 3,
+                backoff: {
+                    type: "exponential",
+                    delay: 5000,
+                },
+                removeOnComplete: 100,
+                removeOnFail: 50,
+            }
+        );
 
-        await processWebhookEvent(req.body);
-
-        res.sendStatus(200);
+        return res.status(200).json({
+            success: true,
+            message: "Webhook received.",
+        });
 
     } catch (error) {
-
-        console.error(error);
-
-        res.sendStatus(500);
-
+        next(error);
     }
 };

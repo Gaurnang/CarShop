@@ -37,19 +37,9 @@ export const getCatalog = async (
         );
 
         // Optional: reject invalid savedCarIds
-        if (
+        if ( savedCarIds.length > 0 && variantIds.length === 0 ) {
 
-            savedCarIds.length > 0 &&
-
-            variantIds.length === 0
-
-        ) {
-
-            throw new Error(
-
-                "Invalid saved car."
-
-            );
+            throw new Error( "Invalid saved car." );
 
         }
 
@@ -71,17 +61,9 @@ export const getCatalog = async (
 
     );
 
-    const page = Number(
+    const page = Number( filters.page || 1 );
 
-        filters.page || 1
-
-    );
-
-    const limit = Number(
-
-        filters.limit || 10
-
-    );
+    const limit = Number( filters.limit || 10 );
 
     return {
 
