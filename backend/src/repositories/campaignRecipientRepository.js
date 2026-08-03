@@ -79,6 +79,23 @@ export const markRecipientBounced = async (
     );
 };
 
+export const markRecipientDelivered = async (
+    messageId,
+    errorMessage = null
+) => {
+    await pool.query(
+        `
+        UPDATE campaign_recipients
+        SET
+            status = 'Delivered',
+            error_message = $2,
+            updated_at = NOW()
+        WHERE message_id = $1;
+        `,
+        [messageId, errorMessage]
+    );
+};
+
 export const markRecipientComplained = async (
     messageId
 ) => {
