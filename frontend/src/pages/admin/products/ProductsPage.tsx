@@ -8,60 +8,66 @@ import { Loader2, Plus, Edit, Trash2, X, ImagePlus, Upload, GitFork } from 'luci
 interface ProductImage {
   id: number;
   imageUrl: string;
-  displayOrder: number;
 }
 
 const ImageUploadModal: React.FC<{ productId: number; productName: string; onClose: () => void }> = ({ productId, productName, onClose }) => {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [previews, setPreviews] = useState<{ file: File; url: string }[]>([]);
+  const [preview, setPreview] = useState<{ file: File; url: string } | null>(null);
 
-  const { data: existingImages, isLoading: imagesLoading } = useQuery<ProductImage[]>({
-    queryKey: ['product_images', productId],
+  const { data: existingImageUrl, isLoading: imageLoading } = useQuery<string | null>({
+    queryKey: ['product_image', productId],
     queryFn: async () => {
       const { data } = await apiClient.get(`/products/${productId}`);
-      return data.data?.images || [];
+      return data.data?.image_url || data.data?.imageUrl || null;
     }
   });
 
   const uploadMutation = useMutation({
-    mutationFn: async (files: File[]) => {
+    mutationFn: async (file: File) => {
       const formData = new FormData();
-      files.forEach(f => formData.append('images', f));
+      formData.append('image', file);
       const { data } = await apiClient.post(`/products/${productId}/images`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       return data;
     },
     onSuccess: () => {
-      toast.success('Images uploaded successfully!');
+      toast.success('Image uploaded successfully!');
       queryClient.invalidateQueries({ queryKey: ['admin_products'] });
-      queryClient.invalidateQueries({ queryKey: ['product_images', productId] });
-      setPreviews([]);
+      queryClient.invalidateQueries({ queryKey: ['product_image', productId] });
+      if (preview) URL.revokeObjectURL(preview.url);
+      setPreview(null);
     },
     onError: (err: any) => toast.error(err.response?.data?.message || 'Upload failed')
   });
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const newPreviews = files.map(f => ({ file: f, url: URL.createObjectURL(f) }));
-    setPreviews(prev => [...prev, ...newPreviews]);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
+  const removeMutation = useMutation({
+    mutationFn: async () => {
+      await apiClient.delete(`/products/${productId}/images`);
+    },
+    onSuccess: () => {
+      toast.success('Image removed');
+      queryClient.invalidateQueries({ queryKey: ['admin_products'] });
+      queryClient.invalidateQueries({ queryKey: ['product_image', productId] });
+    },
+    onError: (err: any) => toast.error(err.response?.data?.message || 'Failed to remove image')
+  });
 
-  const removePreview = (idx: number) => {
-    setPreviews(prev => {
-      URL.revokeObjectURL(prev[idx].url);
-      return prev.filter((_, i) => i !== idx);
-    });
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (preview) URL.revokeObjectURL(preview.url);
+    setPreview({ file, url: URL.createObjectURL(file) });
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-card w-full max-w-lg rounded-xl shadow-xl border border-border p-6 my-8 animate-in zoom-in-95 duration-200">
+      <div className="bg-card w-full max-w-md rounded-xl shadow-xl border border-border p-6 my-8 animate-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-bold">Product Images</h3>
+            <h3 className="text-lg font-bold">Product Image</h3>
             <p className="text-xs text-muted-foreground mt-0.5">{productName}</p>
           </div>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
@@ -69,77 +75,68 @@ const ImageUploadModal: React.FC<{ productId: number; productName: string; onClo
           </button>
         </div>
 
-        {/* Existing Images */}
-        <div className="mb-4">
-          <p className="text-sm font-medium mb-2 text-muted-foreground">Current Images ({existingImages?.length || 0})</p>
-          {imagesLoading ? (
+        {/* Current image */}
+        <div className="mb-5">
+          <p className="text-sm font-medium mb-2 text-muted-foreground">Current Image</p>
+          {imageLoading ? (
             <div className="flex justify-center py-4"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
-          ) : existingImages && existingImages.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {existingImages.map((img: ProductImage) => (
-                <div key={img.id} className="relative w-16 h-16 rounded-lg overflow-hidden border border-border">
-                  <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
-                </div>
-              ))}
+          ) : existingImageUrl ? (
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-border group">
+              <img src={existingImageUrl} alt="" className="w-full h-full object-contain p-2" />
+              <button
+                onClick={() => removeMutation.mutate()}
+                disabled={removeMutation.isPending}
+                className="absolute top-2 right-2 p-1.5 bg-destructive/90 text-destructive-foreground rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+                title="Remove image"
+              >
+                {removeMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+              </button>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground italic">No images uploaded yet.</p>
+            <p className="text-sm text-muted-foreground italic">No image uploaded yet.</p>
           )}
         </div>
 
-        {/* Upload new images */}
+        {/* Upload new image */}
         <div className="border-t border-border pt-4">
-          <p className="text-sm font-medium mb-2">Upload New Images</p>
-          <div
-            className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">Click to select images</p>
-            <p className="text-xs text-muted-foreground/60 mt-1">JPG, PNG up to 10MB each</p>
-          </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept="image/*"
-            className="hidden"
-            onChange={handleFileChange}
-          />
+          <p className="text-sm font-medium mb-2">{existingImageUrl ? 'Replace Image' : 'Upload Image'}</p>
 
-          {previews.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {previews.map((p, idx) => (
-                <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden border border-primary">
-                  <img src={p.url} alt="" className="w-full h-full object-cover" />
-                  <button
-                    onClick={() => removePreview(idx)}
-                    className="absolute top-0.5 right-0.5 p-0.5 bg-background/80 rounded-full"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
+          {!preview ? (
+            <div
+              className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Click to select an image</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">JPG, PNG up to 5MB</p>
+            </div>
+          ) : (
+            <div className="relative rounded-lg overflow-hidden border border-primary">
+              <img src={preview.url} alt="" className="w-full aspect-video object-contain p-2 bg-muted/20" />
+              <button
+                onClick={() => { URL.revokeObjectURL(preview.url); setPreview(null); }}
+                className="absolute top-2 right-2 p-1 bg-background/80 rounded-full border border-border"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
             </div>
           )}
+
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
         </div>
 
         <div className="flex justify-end gap-2 mt-5">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium border border-input rounded-md hover:bg-muted transition-colors"
-          >
+          <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium border border-input rounded-md hover:bg-muted transition-colors">
             Done
           </button>
-          {previews.length > 0 && (
+          {preview && (
             <button
-              onClick={() => uploadMutation.mutate(previews.map(p => p.file))}
+              onClick={() => uploadMutation.mutate(preview.file)}
               disabled={uploadMutation.isPending}
               className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex items-center gap-2"
             >
               {uploadMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-              Upload {previews.length} image{previews.length > 1 ? 's' : ''}
+              Upload Image
             </button>
           )}
         </div>

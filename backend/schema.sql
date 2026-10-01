@@ -42,23 +42,15 @@ CREATE TABLE products (
 
     price NUMERIC(10,2) NOT NULL,
 
+    image_url TEXT,
+
+    image_public_id VARCHAR(255),
+
     is_active BOOLEAN DEFAULT TRUE,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE product_images (
-    id BIGSERIAL PRIMARY KEY,
-
-    product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-
-    public_id VARCHAR(255) NOT NULL,
-
-    image_url TEXT NOT NULL,
-
-    display_order INT DEFAULT 1
 );
 
 CREATE TABLE product_compatibility (

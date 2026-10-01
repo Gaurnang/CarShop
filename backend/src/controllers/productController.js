@@ -4,183 +4,103 @@ import {
   fetchProduct,
   fetchProducts,
   removeProduct,
+  uploadProductImageService,
+  removeProductImageService,
 } from "../services/productService.js";
-
-import * as productImageService from "../services/productImageService.js";
 
 export const create = async (req, res) => {
   try {
+    const { name, description, price, categoryId, imageUrl } = req.body;
 
-    const {
+    const product = await addProduct(
       name,
       description,
       price,
-      categoryId
-    } = req.body;
+      categoryId,
+      imageUrl
+    );
 
-    const product =
-      await addProduct(
-        name,
-        description,
-        price,
-        categoryId
-      );
-
-    res.status(201).json({
-      success: true,
-      data: product,
-    });
-
+    res.status(201).json({ success: true, data: product });
   } catch (error) {
-
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
 export const getAll = async (req, res) => {
   try {
-
-    const results =
-      await fetchProducts(req.query);
+    const results = await fetchProducts(req.query);
 
     res.json({
       success: true,
       data: results.products,
-      pagination : results.pagination
+      pagination: results.pagination,
     });
-
   } catch (error) {
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 export const getOne = async (req, res) => {
   try {
-
-    const product =
-      await fetchProduct(
-        req.params.id
-      );
-
-    res.json({
-      success: true,
-      data: product,
-    });
-
+    const product = await fetchProduct(req.params.id);
+    res.json({ success: true, data: product });
   } catch (error) {
-
-    res.status(404).json({
-      success: false,
-      message: error.message,
-    });
-
+    res.status(404).json({ success: false, message: error.message });
   }
 };
 
 export const update = async (req, res) => {
   try {
+    const { name, description, price, imageUrl, isActive } = req.body;
 
-    const {
+    const product = await editProduct(
+      req.params.id,
       name,
       description,
       price,
       imageUrl,
-      isActive,
-    } = req.body;
+      isActive
+    );
 
-    const product =
-      await editProduct(
-        req.params.id,
-        name,
-        description,
-        price,
-        imageUrl,
-        isActive
-      );
-
-    res.json({
-      success: true,
-      data: product,
-    });
-
+    res.json({ success: true, data: product });
   } catch (error) {
-
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
 export const remove = async (req, res) => {
   try {
-
-    await removeProduct(
-      req.params.id
-    );
-
-    res.json({
-      success: true,
-      message:
-        "Product deleted successfully",
-    });
-
+    await removeProduct(req.params.id);
+    res.json({ success: true, message: "Product deleted successfully" });
   } catch (error) {
-
-    res.status(404).json({
-      success: false,
-      message: error.message,
-    });
-
+    res.status(404).json({ success: false, message: error.message });
   }
 };
 
-export const uploadProductImages = async (
-    req,
-    res
-) => {
+export const uploadProductImage = async (req, res) => {
+  try {
+    const file = req.file || (req.files && req.files[0]);
 
-    try {
-
-        const images =
-            await productImageService.uploadProductImages(
-
-                req.params.id,
-
-                req.files
-
-            );
-
-        res.status(201).json({
-
-            success: true,
-
-            data: images
-
-        });
-
+    if (!file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No image file provided" });
     }
 
-    catch (error) {
+    const image = await uploadProductImageService(req.params.id, file);
 
-        res.status(400).json({
+    res.status(200).json({ success: true, data: image });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
 
-            success: false,
 
-            message: error.message
-
-        });
-
-    }
-
+export const removeImage = async (req, res) => {
+  try {
+    await removeProductImageService(req.params.id);
+    res.json({ success: true, message: "Product image removed successfully" });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
 };

@@ -36,37 +36,18 @@ export const getCatalogProducts = async (
 
             c.name AS category_name,
 
-            (
+            p.image_url AS "imageUrl",
 
-                SELECT
-
-                    COALESCE(
-
-                        json_agg(
-
-                            json_build_object(
-
-                                'id', pi.id,
-
-                                'imageUrl', pi.image_url,
-
-                                'displayOrder', pi.display_order
-
-                            )
-
-                            ORDER BY pi.display_order
-
-                        ),
-
-                        '[]'
-
+            CASE
+                WHEN p.image_url IS NOT NULL THEN
+                    json_build_array(
+                        json_build_object(
+                            'id', p.id,
+                            'imageUrl', p.image_url
+                        )
                     )
-
-                FROM product_images pi
-
-                WHERE pi.product_id = p.id
-
-            ) AS images
+                ELSE '[]'::json
+            END AS images
 
         FROM products p
 
@@ -381,37 +362,18 @@ export const getCatalogProductById = async (id) => {
 
             c.name AS category_name,
 
-            (
+            p.image_url AS "imageUrl",
 
-                SELECT
-
-                    COALESCE(
-
-                        json_agg(
-
-                            json_build_object(
-
-                                'id', pi.id,
-
-                                'imageUrl', pi.image_url,
-
-                                'displayOrder', pi.display_order
-
-                            )
-
-                            ORDER BY pi.display_order
-
-                        ),
-
-                        '[]'
-
+            CASE
+                WHEN p.image_url IS NOT NULL THEN
+                    json_build_array(
+                        json_build_object(
+                            'id', p.id,
+                            'imageUrl', p.image_url
+                        )
                     )
-
-                FROM product_images pi
-
-                WHERE pi.product_id = p.id
-
-            ) AS images
+                ELSE '[]'::json
+            END AS images
 
         FROM products p
 

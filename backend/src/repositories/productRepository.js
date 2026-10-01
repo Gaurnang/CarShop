@@ -4,7 +4,9 @@ export const createProduct = async (
     name,
     description,
     price,
-    categoryId
+    categoryId,
+    imageUrl = null,
+    imagePublicId = null
 ) => {
 
     const result = await pool.query(
@@ -15,14 +17,18 @@ export const createProduct = async (
             name,
             description,
             price,
-            category_id
+            category_id,
+            image_url,
+            image_public_id
         )
         VALUES
         (
             $1,
             $2,
             $3,
-            $4
+            $4,
+            $5,
+            $6
         )
         RETURNING *;
         `,
@@ -31,7 +37,9 @@ export const createProduct = async (
             name,
             description,
             price,
-            categoryId
+            categoryId,
+            imageUrl,
+            imagePublicId
         ]
 
     );
@@ -104,37 +112,18 @@ export const getProducts = async (filters = {}) => {
 
             c.name AS category_name,
 
-            (
+            p.image_url AS "imageUrl",
 
-                SELECT
-
-                    COALESCE(
-
-                        json_agg(
-
-                            json_build_object(
-
-                                'id', pi.id,
-
-                                'imageUrl', pi.image_url,
-
-                                'displayOrder', pi.display_order
-
-                            )
-
-                            ORDER BY pi.display_order
-
-                        ),
-
-                        '[]'
-
+            CASE
+                WHEN p.image_url IS NOT NULL THEN
+                    json_build_array(
+                        json_build_object(
+                            'id', p.id,
+                            'imageUrl', p.image_url
+                        )
                     )
-
-                FROM product_images pi
-
-                WHERE pi.product_id = p.id
-
-            ) AS images
+                ELSE '[]'::json
+            END AS images
 
         FROM products p
 
@@ -585,37 +574,18 @@ export const getProductById = async (id) => {
 
             c.name AS category_name,
 
-            (
+            p.image_url AS "imageUrl",
 
-                SELECT
-
-                    COALESCE(
-
-                        json_agg(
-
-                            json_build_object(
-
-                                'id', pi.id,
-
-                                'imageUrl', pi.image_url,
-
-                                'displayOrder', pi.display_order
-
-                            )
-
-                            ORDER BY pi.display_order
-
-                        ),
-
-                        '[]'
-
+            CASE
+                WHEN p.image_url IS NOT NULL THEN
+                    json_build_array(
+                        json_build_object(
+                            'id', p.id,
+                            'imageUrl', p.image_url
+                        )
                     )
-
-                FROM product_images pi
-
-                WHERE pi.product_id = p.id
-
-            ) AS images,
+                ELSE '[]'::json
+            END AS images,
 
             (
 
@@ -701,7 +671,11 @@ export const updateProduct = async (
 
     price,
 
-    isActive
+    isActive,
+
+    imageUrl,
+
+    imagePublicId
 
 ) => {
 
@@ -712,17 +686,21 @@ export const updateProduct = async (
 
         SET
 
-            name=$1,
+            name = COALESCE($1, name),
 
-            description=$2,
+            description = COALESCE($2, description),
 
-            price=$3,
+            price = COALESCE($3, price),
 
-            is_active=$4,
+            is_active = COALESCE($4, is_active),
 
-            updated_at=CURRENT_TIMESTAMP
+            image_url = CASE WHEN $5::text IS NOT NULL THEN $5 ELSE image_url END,
 
-        WHERE id=$5
+            image_public_id = CASE WHEN $6::text IS NOT NULL THEN $6 ELSE image_public_id END,
+
+            updated_at = CURRENT_TIMESTAMP
+
+        WHERE id = $7
 
         RETURNING *;
         `,
@@ -737,9 +715,83 @@ export const updateProduct = async (
 
             isActive,
 
+            imageUrl !== undefined ? imageUrl : null,
+
+            imagePublicId !== undefined ? imagePublicId : null,
+
             id
 
         ]
+
+    );
+
+    return result.rows[0];
+
+};
+
+export const updateProductImage = async (
+    id,
+    imageUrl,
+    imagePublicId = null
+) => {
+
+    const result = await pool.query(
+
+        `
+        UPDATE products
+
+        SET
+
+            image_url = $1,
+
+            image_public_id = $2,
+
+            updated_at = CURRENT_TIMESTAMP
+
+        WHERE id = $3
+
+        RETURNING *;
+        `,
+
+        [
+
+            imageUrl,
+
+            imagePublicId,
+
+            id
+
+        ]
+
+    );
+
+    return result.rows[0];
+
+};
+
+export const deleteProductImage = async (
+    id
+) => {
+
+    const result = await pool.query(
+
+        `
+        UPDATE products
+
+        SET
+
+            image_url = NULL,
+
+            image_public_id = NULL,
+
+            updated_at = CURRENT_TIMESTAMP
+
+        WHERE id = $1
+
+        RETURNING *;
+        `,
+
+        [id]
 
     );
 

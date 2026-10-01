@@ -7,9 +7,9 @@ import cloudinary from "./config/cloudinary.js";
 
 const PORT = process.env.PORT || 5000;
 
+
 async function startServer() {
   try {
-
     console.log("✅ Connected to Neon PostgreSQL");
 
     app.listen(PORT, () => {

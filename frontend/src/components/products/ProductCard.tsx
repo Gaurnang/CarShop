@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Package, X, ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
+import { Package, X, ShoppingCart } from 'lucide-react';
 
 interface ProductImage {
   id: number;
   imageUrl: string;
-  displayOrder: number;
 }
 
 interface Product {
@@ -18,14 +17,16 @@ interface Product {
 }
 
 const ProductDetailModal: React.FC<{ product: Product; onClose: () => void }> = ({ product, onClose }) => {
-  const images = product.images && product.images.length > 0 ? product.images : [];
-  const [activeIdx, setActiveIdx] = useState(0);
-
-  const prev = () => setActiveIdx(i => (i === 0 ? images.length - 1 : i - 1));
-  const next = () => setActiveIdx(i => (i === images.length - 1 ? 0 : i + 1));
+  const imageUrl =
+    product.images?.[0]?.imageUrl ||
+    product.image_url ||
+    null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto"
+      onClick={onClose}
+    >
       <div
         className="bg-card w-full max-w-2xl rounded-2xl shadow-2xl border border-border overflow-hidden animate-in zoom-in-95 duration-200 my-8"
         onClick={e => e.stopPropagation()}
@@ -38,43 +39,16 @@ const ProductDetailModal: React.FC<{ product: Product; onClose: () => void }> = 
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 p-6">
-          {/* Image gallery */}
-          <div className="flex flex-col gap-3">
-            <div className="relative aspect-square rounded-xl overflow-hidden bg-muted/30 flex items-center justify-center">
-              {images.length > 0 ? (
-                <>
-                  <img
-                    src={images[activeIdx]?.imageUrl}
-                    alt={product.name}
-                    className="h-full w-full object-contain p-4"
-                  />
-                  {images.length > 1 && (
-                    <>
-                      <button onClick={prev} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-background/80 rounded-full border border-border hover:bg-background transition-colors shadow-sm">
-                        <ChevronLeft className="h-4 w-4" />
-                      </button>
-                      <button onClick={next} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-background/80 rounded-full border border-border hover:bg-background transition-colors shadow-sm">
-                        <ChevronRight className="h-4 w-4" />
-                      </button>
-                    </>
-                  )}
-                </>
-              ) : (
-                <Package className="h-20 w-20 text-muted-foreground/30" />
-              )}
-            </div>
-            {images.length > 1 && (
-              <div className="flex gap-2 flex-wrap">
-                {images.map((img, idx) => (
-                  <button
-                    key={img.id}
-                    onClick={() => setActiveIdx(idx)}
-                    className={`w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${idx === activeIdx ? 'border-primary' : 'border-border hover:border-muted-foreground'}`}
-                  >
-                    <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
+          {/* Single image display */}
+          <div className="aspect-square rounded-xl overflow-hidden bg-muted/30 flex items-center justify-center">
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={product.name}
+                className="h-full w-full object-contain p-4"
+              />
+            ) : (
+              <Package className="h-20 w-20 text-muted-foreground/30" />
             )}
           </div>
 
@@ -101,8 +75,10 @@ const ProductDetailModal: React.FC<{ product: Product; onClose: () => void }> = 
 
 export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const images = product.images && product.images.length > 0 ? product.images : [];
-  const firstImage = images[0]?.imageUrl || product.image_url;
+  const imageUrl =
+    product.images?.[0]?.imageUrl ||
+    product.image_url ||
+    null;
 
   return (
     <>
@@ -111,9 +87,9 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         onClick={() => setIsModalOpen(true)}
       >
         <div className="relative aspect-square overflow-hidden bg-muted/30 flex items-center justify-center p-4">
-          {firstImage ? (
+          {imageUrl ? (
             <img
-              src={firstImage}
+              src={imageUrl}
               alt={product.name}
               className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
             />
@@ -126,12 +102,6 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
               {product.category_name}
             </div>
           )}
-
-          {images.length > 1 && (
-            <div className="absolute bottom-2 right-2 rounded-full bg-background/90 px-2 py-0.5 text-xs font-medium border border-border/50 text-muted-foreground">
-              +{images.length - 1} photos
-            </div>
-          )}
         </div>
 
         <div className="flex flex-1 flex-col p-4">
@@ -141,7 +111,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           <p className="mt-2 text-sm text-muted-foreground line-clamp-2 flex-1">
             {product.description}
           </p>
-          
+
           <div className="mt-4 flex items-center justify-between">
             <span className="font-bold text-lg text-foreground">
               ${parseFloat(product.price).toFixed(2)}
@@ -160,4 +130,3 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     </>
   );
 };
-

@@ -7,6 +7,7 @@ import { campaignEmailTemplate } from "../utils/campaignEmailTemplate.js";
 import {
     markRecipientSent,
     markRecipientFailed,
+    saveMessageId
 } from "../repositories/campaignRecipientRepository.js";
 
 const worker = new Worker(
