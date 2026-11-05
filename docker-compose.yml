@@ -11,7 +11,7 @@ services:
       - ./backend:/app
       - /app/node_modules
     restart: unless-stopped
-    command: sh -c "redis-server --daemonize yes --protected-mode no && npm run dev"
+    command: npm run dev
 
   frontend:
     build:
