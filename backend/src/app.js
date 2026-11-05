@@ -17,7 +17,6 @@ import "./workers/webhookWorker.js";
 
 const app = express();
 
-const app = express();
 
 const allowedOrigins = process.env.CLIENT_URL
   .split(",")
@@ -32,7 +31,6 @@ app.use(
   })
 );
 
-app.use(express.json());
 
 app.use(express.json());
 
