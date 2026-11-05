@@ -10,11 +10,8 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
-    depends_on:
-      redis:
-        condition: service_healthy
     restart: unless-stopped
-    command: npm run dev
+    command: sh -c "redis-server --daemonize yes --protected-mode no && npm run dev"
 
   frontend:
     build:
@@ -29,20 +26,3 @@ services:
       - backend
     restart: unless-stopped
     command: npm run dev -- --host
-
-  redis:
-    image: redis:7-alpine
-    container_name: carshop-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-
-volumes:
-  redis-data:

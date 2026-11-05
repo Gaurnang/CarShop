@@ -1,15 +1,17 @@
 FROM node:22-alpine
 
+# Install redis server directly inside the container
+RUN apk add --no-cache redis
+
 WORKDIR /app
 
 COPY package*.json ./
 
-# Install all deps including devDependencies (needed for nodemon)
 RUN npm install
 
 COPY . .
 
 EXPOSE 5000
 
-# Use nodemon for auto-restart on file changes
-CMD ["npm", "run", "dev"]
+# Start redis-server in background, then start app
+CMD redis-server --daemonize yes --protected-mode no && npm start
