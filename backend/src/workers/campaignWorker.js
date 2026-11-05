@@ -62,4 +62,8 @@ const worker = new Worker(
     }
 );
 
+worker.on("error", (err) => {
+    console.error("Campaign worker error:", err.message);
+});
+
 export default worker;

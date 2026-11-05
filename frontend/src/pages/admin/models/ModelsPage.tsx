@@ -136,7 +136,7 @@ export const ModelsPage: React.FC = () => {
           <table className="w-full text-sm text-left">
             <thead className="bg-muted/50 text-muted-foreground border-b border-border">
               <tr>
-                <th className="px-6 py-3 font-semibold w-24">ID</th>
+                <th className="px-6 py-3 font-semibold w-16">#</th>
                 <th className="px-6 py-3 font-semibold">Name</th>
                 <th className="px-6 py-3 font-semibold">Brand</th>
                 <th className="px-6 py-3 font-semibold text-right">Actions</th>
@@ -150,9 +150,9 @@ export const ModelsPage: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                models?.map((model: Model) => (
-                  <tr key={model.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-6 py-4 font-medium">{model.id}</td>
+                models?.map((model: Model, index: number) => (
+                  <tr key={index} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-6 py-4 font-medium text-muted-foreground">{index + 1}</td>
                     <td className="px-6 py-4 font-medium">{model.name}</td>
                     <td className="px-6 py-4 text-muted-foreground">{model.brand_name}</td>
                     <td className="px-6 py-4 text-right">

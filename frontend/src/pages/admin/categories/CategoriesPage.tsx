@@ -122,7 +122,7 @@ export const CategoriesPage: React.FC = () => {
           <table className="w-full text-sm text-left">
             <thead className="bg-muted/50 text-muted-foreground border-b border-border">
               <tr>
-                <th className="px-6 py-3 font-semibold">ID</th>
+                <th className="px-6 py-3 font-semibold w-16">#</th>
                 <th className="px-6 py-3 font-semibold">Name</th>
                 <th className="px-6 py-3 font-semibold text-right">Actions</th>
               </tr>
@@ -135,9 +135,9 @@ export const CategoriesPage: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                categories?.map((cat: Category) => (
-                  <tr key={cat.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-6 py-4 font-medium">{cat.id}</td>
+                categories?.map((cat: Category, index: number) => (
+                  <tr key={index} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-6 py-4 font-medium text-muted-foreground">{index + 1}</td>
                     <td className="px-6 py-4">{cat.name}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">

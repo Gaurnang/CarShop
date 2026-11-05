@@ -10,7 +10,7 @@ import {
 
 export const create = async (req, res) => {
   try {
-    const { name, description, price, categoryId, imageUrl } = req.body;
+    const { name, description, price = 0, categoryId, imageUrl } = req.body;
 
     const product = await addProduct(
       name,

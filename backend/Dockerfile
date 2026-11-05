@@ -4,10 +4,12 @@ WORKDIR /app
 
 COPY package*.json ./
 
+# Install all deps including devDependencies (needed for nodemon)
 RUN npm install
 
 COPY . .
 
 EXPOSE 5000
 
-CMD ["npm", "start"]
+# Use nodemon for auto-restart on file changes
+CMD ["npm", "run", "dev"]

@@ -34,7 +34,7 @@ app.use("/api/products", productRoutes);//
 app.use("/api/products", productCompatibilityRoutes);//
 
 
-app.use("/api/campaigns",campaignRoutes);//
+app.use("/api/campaigns",campaignRoutes);
 app.use("/api/webhooks", webhookRoutes);
 
 app.use("/api/users", userRoutes);

@@ -138,7 +138,7 @@ export const VariantsPage: React.FC = () => {
           <table className="w-full text-sm text-left">
             <thead className="bg-muted/50 text-muted-foreground border-b border-border">
               <tr>
-                <th className="px-6 py-3 font-semibold w-24">ID</th>
+                <th className="px-6 py-3 font-semibold w-16">#</th>
                 <th className="px-6 py-3 font-semibold">Name</th>
                 <th className="px-6 py-3 font-semibold">Model / Brand</th>
                 <th className="px-6 py-3 font-semibold text-right">Actions</th>
@@ -152,9 +152,9 @@ export const VariantsPage: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                variants?.map((variant: Variant) => (
-                  <tr key={variant.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-6 py-4 font-medium">{variant.id}</td>
+                variants?.map((variant: Variant, index: number) => (
+                  <tr key={index} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-6 py-4 font-medium text-muted-foreground">{index + 1}</td>
                     <td className="px-6 py-4 font-medium">{variant.name}</td>
                     <td className="px-6 py-4 text-muted-foreground">
                       {variant.brand_name} {variant.model_name}

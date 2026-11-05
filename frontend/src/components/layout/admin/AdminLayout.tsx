@@ -34,17 +34,19 @@ export const AdminLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-muted/20 flex font-sans antialiased">
-      {/* Sidebar */}
-      <aside className="w-64 bg-card border-r border-border hidden md:flex flex-col">
-        <div className="h-16 flex items-center px-6 border-b border-border">
+    <div className="h-screen overflow-hidden bg-muted/20 flex font-sans antialiased">
+      {/* Sidebar — fixed height, profile pinned to bottom */}
+      <aside className="w-64 bg-card border-r border-border hidden md:flex flex-col h-full shrink-0">
+        {/* Logo */}
+        <div className="h-16 shrink-0 flex items-center px-6 border-b border-border">
           <Link to="/" className="flex items-center gap-2">
             <Car className="h-6 w-6 text-primary" />
             <span className="font-bold text-lg tracking-tight">Admin Portal</span>
           </Link>
         </div>
-        
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+
+        {/* Nav — scrollable, takes remaining space */}
+        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto min-h-0">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -54,8 +56,8 @@ export const AdminLayout: React.FC = () => {
                 to={item.path}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  isActive 
-                    ? "bg-primary text-primary-foreground" 
+                  isActive
+                    ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >
@@ -66,15 +68,16 @@ export const AdminLayout: React.FC = () => {
           })}
         </nav>
 
-        <div className="p-4 border-t border-border">
-          <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+        {/* Profile — always pinned to bottom */}
+        <div className="shrink-0 p-4 border-t border-border">
+          <div className="flex items-center gap-3 px-3 py-2 mb-1 rounded-md hover:bg-muted transition-colors">
+            <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
               <span className="text-primary font-bold text-sm">
                 {user?.name?.charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-medium truncate">{user?.name}</span>
+              <span className="text-sm font-semibold truncate">{user?.name}</span>
               <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
             </div>
           </div>
@@ -91,7 +94,7 @@ export const AdminLayout: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Mobile Header */}
-        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-4 md:hidden">
+        <header className="h-16 shrink-0 bg-card border-b border-border flex items-center justify-between px-4 md:hidden">
           <div className="flex items-center gap-2">
             <Car className="h-6 w-6 text-primary" />
             <span className="font-bold text-lg tracking-tight">Admin Portal</span>
@@ -101,8 +104,8 @@ export const AdminLayout: React.FC = () => {
           </button>
         </header>
 
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        {/* Content Area — scrollable, never clips */}
+        <div className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 lg:p-8">
           <Outlet />
         </div>
       </main>

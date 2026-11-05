@@ -97,8 +97,6 @@ export const CatalogPage: React.FC = () => {
     savedCarId: selectedCarId || undefined,
     variantId: variantId ? Number(variantId) : undefined,
     categoryId: categoryId ? Number(categoryId) : undefined,
-    sort: sortOption ? 'price' : undefined,
-    order: sortOption === 'price_desc' ? 'DESC' : (sortOption === 'price_asc' ? 'ASC' : undefined)
   });
 
   if (isAdmin) {
@@ -139,18 +137,6 @@ export const CatalogPage: React.FC = () => {
                 {categories?.map((cat: any) => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
-              </select>
-            </div>
-
-            <div className="w-full sm:w-auto min-w-[140px]">
-              <select
-                value={sortOption}
-                onChange={(e) => setParam('sort', e.target.value)}
-                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                <option value="">Sort By (Default)</option>
-                <option value="price_asc">Price: Low to High</option>
-                <option value="price_desc">Price: High to Low</option>
               </select>
             </div>
 

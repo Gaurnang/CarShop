@@ -149,7 +149,7 @@ interface Product {
   id: number;
   name: string;
   description: string;
-  price: number;
+  price?: number;
   category_name: string;
   category_id: number;
   is_active: boolean;
@@ -378,7 +378,6 @@ export const ProductsPage: React.FC = () => {
   const { register, handleSubmit, reset, setValue } = useForm<{
     name: string;
     description: string;
-    price: number;
     categoryId: number;
     isActive: boolean;
     imageUrl?: string;
@@ -444,7 +443,6 @@ export const ProductsPage: React.FC = () => {
       setEditingId(product.id);
       setValue('name', product.name);
       setValue('description', product.description);
-      setValue('price', product.price);
       setValue('categoryId', product.category_id);
       setValue('isActive', product.is_active);
       setValue('imageUrl', product.image_url);
@@ -463,7 +461,7 @@ export const ProductsPage: React.FC = () => {
   };
 
   const onSubmit = (data: any) => {
-    const payload = { ...data, price: Number(data.price), categoryId: Number(data.categoryId) };
+    const payload = { ...data, price: 0, categoryId: Number(data.categoryId) };
     if (editingId) {
       updateMutation.mutate({ id: editingId, data: payload });
     } else {
@@ -503,10 +501,9 @@ export const ProductsPage: React.FC = () => {
             <table className="w-full text-sm text-left">
               <thead className="bg-muted/50 text-muted-foreground border-b border-border">
                 <tr>
-                  <th className="px-6 py-3 font-semibold w-24">ID</th>
+                  <th className="px-6 py-3 font-semibold w-16">#</th>
                   <th className="px-6 py-3 font-semibold">Name</th>
                   <th className="px-6 py-3 font-semibold">Category</th>
-                  <th className="px-6 py-3 font-semibold">Price</th>
                   <th className="px-6 py-3 font-semibold">Status</th>
                   <th className="px-6 py-3 font-semibold text-right">Actions</th>
                 </tr>
@@ -514,17 +511,16 @@ export const ProductsPage: React.FC = () => {
               <tbody className="divide-y divide-border">
                 {products.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">
+                    <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">
                       No products found.
                     </td>
                   </tr>
                 ) : (
-                  products.map((product: Product) => (
-                    <tr key={product.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-4 font-medium">{product.id}</td>
+                  products.map((product: Product, index: number) => (
+                    <tr key={index} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-6 py-4 font-medium text-muted-foreground">{index + 1}</td>
                       <td className="px-6 py-4 font-medium">{product.name}</td>
                       <td className="px-6 py-4 text-muted-foreground">{product.category_name}</td>
-                      <td className="px-6 py-4">${Number(product.price).toFixed(2)}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${product.is_active ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
                           {product.is_active ? 'Active' : 'Inactive'}
@@ -609,16 +605,6 @@ export const ProductsPage: React.FC = () => {
                   className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring h-24 resize-none"
                   placeholder="Product description..."
                 ></textarea>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Price ($)</label>
-                <input
-                  {...register('price', { required: true })}
-                  type="number"
-                  step="0.01"
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="0.00"
-                />
               </div>
               {editingId && (
                 <div>

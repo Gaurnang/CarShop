@@ -12,4 +12,8 @@ const webhookWorker = new Worker(
     }
 );
 
+webhookWorker.on("error", (err) => {
+    console.error("Webhook worker error:", err.message);
+});
+
 export default webhookWorker;
