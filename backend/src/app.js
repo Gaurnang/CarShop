@@ -15,35 +15,39 @@ import webhookRoutes from "./routes/webhookRoutes.js";
 import "./workers/campaignWorker.js";
 import "./workers/webhookWorker.js";
 
-
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      process.env.CLIENT_URL,
+      "http://localhost:5173",
+    ],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
-app.use("/api/auth", authRoutes);//
+app.use("/api/auth", authRoutes);
 
-//admin
-app.use("/api/brands", brandRoutes);//
-app.use("/api/models", modelRoutes);//
-app.use("/api/variants", variantRoutes);//
+// Admin
+app.use("/api/brands", brandRoutes);
+app.use("/api/models", modelRoutes);
+app.use("/api/variants", variantRoutes);
 
 app.use("/api/categories", categoryRoutes);
-app.use("/api/products", productRoutes);//
-app.use("/api/products", productCompatibilityRoutes);//
+app.use("/api/products", productRoutes);
+app.use("/api/products", productCompatibilityRoutes);
 
-
-app.use("/api/campaigns",campaignRoutes);
+app.use("/api/campaigns", campaignRoutes);
 app.use("/api/webhooks", webhookRoutes);
 
 app.use("/api/users", userRoutes);
 
-//users
-app.use("/api/my-cars", savedCarRoutes);//
-
-app.use("/api/catalog", catalogRoutes);//
-
+// Users
+app.use("/api/my-cars", savedCarRoutes);
+app.use("/api/catalog", catalogRoutes);
 
 app.get("/", (req, res) => {
   res.json({
