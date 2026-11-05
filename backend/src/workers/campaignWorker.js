@@ -17,7 +17,7 @@ const worker = new Worker(
 
         try {
             const response = await resend.emails.send({
-                from: "CarShop <onboarding@resend.dev>",
+                from: "CarShop <noreply@darkknight.store>",
                 to: user.email,
                 subject: campaign.subject,
                 html: campaignEmailTemplate(user, campaign),
